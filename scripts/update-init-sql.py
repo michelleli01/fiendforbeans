@@ -6,9 +6,12 @@ DB_NAME = "coffeedb"
 TABLE_NAME = "reviews"
 
 TABLE_SCHEMA = {
-    "id": "int",
-    "name": "varchar(128)",
-    "review": "varchar(1024)",
+    "id": "INT",
+    "name": "VARCHAR(128)",
+    "roast": "VARCHAR(32)",
+    "100g_USD": "DOUBLE(5,2)",
+    "origin": "VARCHAR(32)",
+    "review": "VARCHAR(1024)",
 }
 
 
@@ -31,7 +34,7 @@ CREATE TABLE {TABLE_NAME}(
     )
 
     for idx, (k, v) in enumerate(TABLE_SCHEMA.items()):
-        schema = f",\n\t\t{k} {v}" if idx != 0 else f"{k} {v}"
+        schema = f",\n\t{k} {v}" if idx != 0 else f"\t{k} {v}"
         file.write(schema)
     file.write("\n);\n\n")
 
