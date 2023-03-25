@@ -3,10 +3,12 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+    rel="stylesheet">
+
 <body>
     <div class="full-body-container">
-        <div class="top-text">
+        <!-- <div class="top-text">
             <div class="google-colors">
                 <h1 id="google-c">C</h1>
                 <h1 id="google-s">S</h1>
@@ -14,43 +16,44 @@
                 <h1 id="google-3">3</h1>
                 <h1 id="google-0-1">0</h1>
                 <h1 id="google-0-2">0</h1>
-            </div>
-            <div class="input-box" onclick="sendFocus()">
-                <img src="{{ url_for('static', filename='images/mag.png') }}" />
-                <input placeholder="Search for a Keeping up with the Kardashians episode" id="filter-text-val" onkeyup="filterText()">
-            </div>
+            </div> -->
+        <img style="width: 50%;" src="/static/images/logo.png" alt="Fiend for Beans logo">
+        <div class="input-box" onclick="sendFocus()">
+            <img src="{{ url_for('static', filename='images/mag.png') }}" />
+            <input placeholder="citrus, floral, sweet" id="filter-text-val" onkeyup="filterText()">
         </div>
-        <div id="answer-box">
+    </div>
+    <div id="answer-box">
 
-        </div>
+    </div>
     </div>
 
     <script>
 
-        function answerBoxTemplate(title,titleDesc){
+        function answerBoxTemplate(title, titleDesc) {
             return `<div class=''>
                 <h3 class='episode-title'>${title}</h3>
                 <p class='episode-desc'>${titleDesc}</p>
             </div>`
         }
 
-        function sendFocus(){
+        function sendFocus() {
             document.getElementById('filter-text-val').focus()
         }
 
-        function filterText(){
+        function filterText() {
             document.getElementById("answer-box").innerHTML = ""
             console.log(document.getElementById("filter-text-val").value)
             fetch("/episodes?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
-            .then((response) => response.json())
-            .then((data) => data.forEach(row => {
-                
-                let tempDiv = document.createElement("div")
-                tempDiv.innerHTML = answerBoxTemplate(row.title,row.descr)
-                document.getElementById("answer-box").appendChild(tempDiv)
-            }));
+                .then((response) => response.json())
+                .then((data) => data.forEach(row => {
+
+                    let tempDiv = document.createElement("div")
+                    tempDiv.innerHTML = answerBoxTemplate(row.title, row.descr)
+                    document.getElementById("answer-box").appendChild(tempDiv)
+                }));
 
         }
-            
+
     </script>
 </body>
