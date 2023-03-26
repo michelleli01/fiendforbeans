@@ -41,16 +41,6 @@ def load_data():
 data = load_data() #string of dictionaries
 data_list = json.loads(data) #convert to list of dicts
 
-#below no longer needed
-def load_reviews():
-    query_sql=f"""SELECT review from reviews"""
-    data = mysql_engine.query_selector(query_sql)
-    return json.dumps([row["review"] for row in data])
-
-reviews = load_reviews()
-reviews_list = reviews.split(',')
-#above no longer needed
-
 #Cosine Sim Algorithm
 def tokenize(text):
     """Returns a list of words that make up the text.
