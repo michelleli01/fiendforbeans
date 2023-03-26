@@ -38,9 +38,10 @@
   <div id="answer-box"></div>
 
   <script>
-    function answerBoxTemplate(title, titleDesc) {
+    function answerBoxTemplate(title, similarity, titleDesc) {
       return `<div class=''>
                 <h3 class='bean-title'>${title}</h3>
+                <p class='bean-similarity'>Percent Confidence: ${similarity}</p>
                 <p class='bean-desc'>${titleDesc}</p>
             </div>`;
     }
@@ -63,8 +64,13 @@
           data.forEach((d) => {
             let bean = d.bean_info;
             let score = d.score;
+            let percentConfidence = `${score.toFixed(2) * 100}%`;
             let tempDiv = document.createElement("div");
-            tempDiv.innerHTML = answerBoxTemplate(bean.name, bean.review);
+            tempDiv.innerHTML = answerBoxTemplate(
+              bean.name,
+              percentConfidence,
+              bean.review,
+            );
             document.getElementById("answer-box").appendChild(tempDiv);
           }),
         );
