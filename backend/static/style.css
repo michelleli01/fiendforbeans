@@ -1,5 +1,5 @@
 .full-body-container{
-    position: absolute;
+    /* position: absolute; */
     top:0;
     left:0;
     right:0;
@@ -78,14 +78,23 @@
 }
 
 #answer-box{
-    width: 700px;
-    margin-top:50px; 
+    /* width: 700px; */
+    /* margin-top:50px; 
+    margin-top: 50px; */
+    margin: auto;
+    width: 50%;
 }
 
-.episode-title{
+h3, .episode-title{
     font-family: 'Kanit', sans-serif;
 }
 
-.episode-desc{
+p, .episode-desc{
     font-family: 'Montserrat', sans-serif;
+}
+
+.result{
+    /* display: flex;
+     */
+
 }

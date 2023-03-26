@@ -17,20 +17,99 @@
                 <h1 id="google-0-1">0</h1>
                 <h1 id="google-0-2">0</h1>
             </div> -->
-        <img style="width: 50%;" src="/static/images/logo.png" alt="Fiend for Beans logo">
+        <img style="padding-top: 10%; width: 50%;" src="/static/images/logo.png" alt="Fiend for Beans logo">
         <div class="input-box" onclick="sendFocus()">
             <img src="{{ url_for('static', filename='images/mag.png') }}" />
             <input placeholder="citrus, floral, sweet" id="filter-text-val" onkeyup="filterText()">
         </div>
     </div>
     <div id="answer-box">
+        <div class="result" id="result-1">
+            <!-- result here -->
+            <h3>Ethiopia Shakiso Mormora</h3>
+            <p>Crisply sweet, cocoa-toned. Lemon blossom, roasted cacao nib, date, rice candy, white peppercorn 
+                in aroma and cup. Savory-tart structure; delicate, silky mouthfeel. The richly drying finish leads with 
+                cocoa-toned, crisply sweet floral notes in the short and a hint of spice (white peppercorn) in the long.</p> 
+        </div>
 
+        <div class="result" id="result-2">
+            <!-- result here -->
+            <h3>Organic Ethiopia Kirite</h3>
+            <p>Ethiopia','Balanced, sweet-savory. Red currant, roasted cacao nib, clove, blood orange zest, 
+                frankincense in aroma and cup. Savory-sweet structure with lively acidity; syrupy mouthfeel. The resonant, 
+                spice-toned finish leads with intimations of clove and roasted cacao nib in the short, rounding to rich fruit tones 
+                with hints of frankincense in the long.</p>
+        </div>
+
+        <div class="result" id="result-3">
+            <!-- result here -->
+            <h3>Kenya Kirinyaga Mukangu AB</h3>
+            <p>Crisply sweet-savory. Lavender, roasted cacao nib, strawberry guava, hazelnut, toasted barley in aroma and 
+                cup. Sweetly floral structure with savory undertones; crisp, velvety mouthfeel. The cocoa-toned finish leads 
+                with spicy florals and tropical fruit in the short, grounded by pleasing notes of toasted barley in the long.</p>
+        </div>
+
+        <div class="result" id="result-4">
+            <!-- result here -->
+            <h3>Kenya Nyeri Othaya Gatugi Red Cherry Project AA</h3>
+            <p>Sweetly pungent, gently roasty. Scorched cedar, dark chocolate, plum, lavender, lime zest in aroma and cup. 
+                Complex in structure: sweetly tart with a roasty, savory depth. Light, satiny mouthfeel. Lemon zest, dark chocolate, plum 
+                carry into a rich though drying finish.</p>
+        </div>
+
+        <div class="result" id="result-5">
+            <!-- result here -->
+            <h3>Static Colombia Decaf Midnight</h3>
+            <p>Deeply sweet, chocolate-toned. Dark chocolate, Brazil nut, gardenia, baked apple, cedar in aroma and cup. 
+                Roundly sweet in structure; lean, lightly syrupy body. The gently drying finish is characterized by notes of dark chocolate throughout, 
+                supported by gardenia and apple tones in the short and cedar in the long.</p>
+        </div>
+
+        <div class="result" id="result-6">
+            <!-- result here -->
+            <h3>Finca Patzibir</h3>
+            <p>Chocolaty, floral-framed. Cocoa nib, honeysuckle, date, almond butter, cedar in aroma and cup. 
+                Sweet structure with bright acidity; satiny-smooth mouthfeel. Cocoa nib and honeysuckle carry the finish, with hints of cedar underneath.</p>
+        </div>
+
+        <div class="result" id="result-7">
+            <!-- result here -->
+            <h3>Proyecto Aurora</h3>
+            <p>Crisply sweet, nut-toned. Almond brittle, pie cherry, magnolia, baking chocolate, mesquite in aroma and cup. 
+                Sweet structure with brisk acidity; very syrupy mouthfeel. The finish consolidates to notes of baking chocolate, pie cherry and mesquite.</p>
+        </div>
+
+        <div class="result" id="result-8">
+            <!-- result here -->
+            <h3>Finca El Potrero</h3>
+            <p>High-toned, enticingly sweet. Black cherry, narcissus, cashew butter, lemon verbena, juniper bark in aroma and cup. 
+                Sweet-tart structure with bright acidity; crisp, satiny-smooth mouthfeel. The finish leads with notes of black 
+                cherry and lemon verbena, rounding to creamy cashew in the long.</p>
+        </div>
+
+        <div class="result" id="result-9">
+            <!-- result here -->
+            <h3>Chacayá Santiago Atitlán</h3>
+            <p>Vibrantly sweet, subtly nuanced. Apricot, dark chocolate, hazelnut, hyacinth, honey in aroma and cup. 
+                Sweetly tart structure with brisk acidity; smooth, syrupy mouthfeel. The chocolaty finish is supported 
+                by notes of apricot and hazelnut.</p>
+        </div>
+
+        <div class="result" id="result-10">
+            <!-- result here -->
+            <h3>Espresso No. 3</h3>
+            <p>Evaluated as espresso. Multi-layered, complex. Dark chocolate, dried apricot, star jasmine, cedar, hazelnut butter 
+                in aroma and small cup. Very syrupy mouthfeel; crisply fruit-toned finish. In three parts milk, chocolate and 
+                apricot notes are amplified, supported by spicy florals.</p>
+        </div>
     </div>
     </div>
+
 
     <script>
 
         function answerBoxTemplate(title, titleDesc) {
+            // console.log(3)
             return `<div class=''>
                 <h3 class='episode-title'>${title}</h3>
                 <p class='episode-desc'>${titleDesc}</p>
@@ -39,17 +118,20 @@
 
         function sendFocus() {
             document.getElementById('filter-text-val').focus()
+            // console.log(2)
         }
 
         function filterText() {
             document.getElementById("answer-box").innerHTML = ""
             console.log(document.getElementById("filter-text-val").value)
-            fetch("/episodes?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
+            fetch("/coffee?" + new URLSearchParams({ flavor: document.getElementById("filter-text-val").value }).toString())
+                // console.log(new URLSearchParams({ flavor: document.getElementById("filter-text-val").value }).toString())
+
                 .then((response) => response.json())
                 .then((data) => data.forEach(row => {
 
                     let tempDiv = document.createElement("div")
-                    tempDiv.innerHTML = answerBoxTemplate(row.title, row.descr)
+                    tempDiv.innerHTML = answerBoxTemplate(row.title, row.titleDesc)
                     document.getElementById("answer-box").appendChild(tempDiv)
                 }));
 
