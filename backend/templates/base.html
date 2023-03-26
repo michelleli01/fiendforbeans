@@ -169,9 +169,9 @@
       document.getElementById("answer-box").innerHTML = "";
       console.log(document.getElementById("filter-text-val").value);
       fetch(
-        "/coffee?" +
+        "/beans?" +
           new URLSearchParams({
-            flavor: document.getElementById("filter-text-val").value,
+            query: document.getElementById("filter-text-val").value,
           }).toString(),
       )
         // console.log(new URLSearchParams({ flavor: document.getElementById("filter-text-val").value }).toString())
