@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<title>{% block title %}{% endblock %} - Flaskr</title>
+<title>Fiend 4 Beans</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
-  rel="stylesheet"
-/>
+<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+  rel="stylesheet" />
 
 <body>
   <link href="styles.css" type="text/html" />
@@ -21,18 +19,10 @@
                 <h1 id="google-0-1">0</h1>
                 <h1 id="google-0-2">0</h1>
             </div> -->
-    <img
-      style="padding-top: 10%; width: 50%"
-      src="/static/images/logo.png"
-      alt="Fiend for Beans logo"
-    />
+    <img style="padding-top: 10%; width: 50%" src="/static/images/logo.png" alt="Fiend for Beans logo" />
     <div class="input-box" onclick="sendFocus()">
       <img src="{{ url_for('static', filename='images/mag.png') }}" />
-      <input
-        placeholder="citrus, floral, sweet"
-        id="filter-text-val"
-        onkeyup="filterText()"
-      />
+      <input placeholder="citrus, floral, sweet" id="filter-text-val" onkeyup="filterText()" />
     </div>
   </div>
   <div id="answer-box"></div>
@@ -55,9 +45,9 @@
       console.log(document.getElementById("filter-text-val").value);
       fetch(
         "http://127.0.0.1:5000/beans?" +
-          new URLSearchParams({
-            query: document.getElementById("filter-text-val").value,
-          }).toString(),
+        new URLSearchParams({
+          query: document.getElementById("filter-text-val").value,
+        }).toString(),
       )
         .then((response) => response.json())
         .then((data) =>
