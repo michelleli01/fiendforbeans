@@ -40,8 +40,8 @@
   <script>
     function answerBoxTemplate(title, titleDesc) {
       return `<div class=''>
-                <h3 class='episode-title'>${title}</h3>
-                <p class='episode-desc'>${titleDesc}</p>
+                <h3 class='bean-title'>${title}</h3>
+                <p class='bean-desc'>${titleDesc}</p>
             </div>`;
     }
 
@@ -64,7 +64,7 @@
             let bean = d.bean_info;
             let score = d.score;
             let tempDiv = document.createElement("div");
-            tempDiv.innerHTML = answerBoxTemplate(bean.name, bean.titleDesc);
+            tempDiv.innerHTML = answerBoxTemplate(bean.name, bean.review);
             document.getElementById("answer-box").appendChild(tempDiv);
           }),
         );
