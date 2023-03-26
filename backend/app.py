@@ -191,18 +191,17 @@ def index_search(query, index, idf, doc_norms, tokenizer, score_func=accumulate_
     results = sorted(results, key=lambda x: x[0], reverse=True)
     return results[0:10] #return first top ten similar
 
-def get_top_10_rec(query):
-    review_dict = tokenize_reviews(data_list)
-    inv_idx = build_inverted_index(review_dict)
-    idf = compute_idf(inv_idx, len(review_dict),
-                    min_df=10,
-                    max_df_ratio=0.1)
+review_dict = tokenize_reviews(data_list)
+inv_idx = build_inverted_index(review_dict)
+idf = compute_idf(inv_idx, len(review_dict),
+                min_df=10,
+                max_df_ratio=0.1)
 
-    inv_idx = {key: val for key, val in inv_idx.items()
-            if key in idf}            # prune the terms left out by idf
-    bean_doc_norms = compute_doc_norms(inv_idx, idf, len(review_dict))
+inv_idx = {key: val for key, val in inv_idx.items()
+        if key in idf}            # prune the terms left out by idf
+bean_doc_norms = compute_doc_norms(inv_idx, idf, len(review_dict))
 
-
+def get_top_10_rec(query, inv_idx=inv_idx, idf=idf, bean_doc_norms=bean_doc_norms, tokenize=tokenize):
     output = index_search(query, inv_idx, idf, bean_doc_norms, tokenize) #score, doc id
     rec_beans = list() #list of tuples of top 10 recommended beans s.t. (name, cossim_score)
     for score, bean_id in output:
