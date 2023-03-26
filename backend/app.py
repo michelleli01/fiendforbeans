@@ -221,7 +221,7 @@ def get_top_10_rec(query):
     rec_beans = list() #list of tuples of top 10 recommended beans s.t. (name, cossim_score)
     for score, bean_id in output:
         bean_info = data_list[bean_id]
-        rec_beans.append({"bean info":bean_info, "score":score})
+        rec_beans.append({"bean_info":bean_info, "score":score})
     return rec_beans
 
 #rel_beans should be top 10 most similar cbeans & reviews & what frontend displays
