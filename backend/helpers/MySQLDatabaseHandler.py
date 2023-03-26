@@ -2,7 +2,7 @@ import os
 import sqlalchemy as db
 
 class MySQLDatabaseHandler(object):
-    
+
     def __init__(self,MYSQL_USER,MYSQL_USER_PASSWORD,MYSQL_PORT,MYSQL_DATABASE,MYSQL_HOST = "localhost"):
         self.IS_DOCKER = True if 'DB_NAME' in os.environ else False
         self.MYSQL_HOST = os.environ['DB_NAME'] if self.IS_DOCKER else MYSQL_HOST
@@ -22,7 +22,7 @@ class MySQLDatabaseHandler(object):
 
     def lease_connection(self):
         return self.engine.connect()
-    
+
     def query_executor(self,query):
         conn = self.lease_connection()
         if type(query) == list:
@@ -30,7 +30,7 @@ class MySQLDatabaseHandler(object):
                 conn.execute(i)
         else:
             conn.execute(query)
-        
+
 
     def query_selector(self,query):
         conn = self.lease_connection()
@@ -42,7 +42,7 @@ class MySQLDatabaseHandler(object):
             return
         if file_path is None:
             file_path = os.path.join(os.environ['ROOT_PATH'],'init.sql')
-        sql_file = open(file_path,"r")
+        sql_file = open(file_path,"r", encoding="utf-8")
         sql_file_data = list(filter(lambda x:x != '',sql_file.read().split(";\n")))
         self.query_executor(sql_file_data)
         sql_file.close()
