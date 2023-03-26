@@ -65,7 +65,6 @@
           data.forEach((d) => {
             let bean = d.bean_info;
             let score = d.score;
-            console.log(bean);
             let tempDiv = document.createElement("div");
             tempDiv.innerHTML = answerBoxTemplate(bean.name, bean.titleDesc);
             document.getElementById("answer-box").appendChild(tempDiv);
