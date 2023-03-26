@@ -48,6 +48,7 @@ def tokenize(text):
     Returns: List
     """
     return re.findall('[a-z]+', text.lower())
+
 def tokenize_reviews(coffee_data):
     '''
     Returns a dictionary with all reviews and their tokenized words
@@ -189,11 +190,6 @@ def index_search(query, index, idf, doc_norms, tokenizer, score_func=accumulate_
 
     results = sorted(results, key=lambda x: x[0], reverse=True)
     return results[0:10] #return first top ten similar
-
-#run functions
-#hard code query for sake of demo
-#treebank_tokenizer = TreebankWordTokenizer()
-
 
 def get_top_10_rec(query):
     review_dict = tokenize_reviews(data_list)
