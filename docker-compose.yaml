@@ -9,7 +9,7 @@ services:
                 context: ./backend
                 dockerfile: Dockerfile
                 args:
-                        DB_NAME: ${TEAM_NAME}
+                        DB_NAME: fiendforbeans
         depends_on:
                 - db
         environment:
