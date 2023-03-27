@@ -53,14 +53,17 @@
     border:1px solid black;
     display: flex;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 20px;
     padding:12px;
     width: 600px;
+    margin-bottom: 2rem;
+    justify-content: space-between
 }
 
 .input-box img{
     height: 20px;
     width:20px;
+    margin-bottom: 5%
 }
 
 .top-text{
@@ -93,8 +96,26 @@ p, .episode-desc{
     font-family: 'Montserrat', sans-serif;
 }
 
-.result{
-    /* display: flex;
-     */
 
+#search-button {
+    border-radius: 10px;
+    height: 50px;
+    width: 120px;
+    color: grey;
+    background-color:  #E5E4E2;
+    border-color: none;
+    font-weight: bold
 }
+
+.enabled {
+    color: black; 
+}
+
+.enabled:hover {
+    border-color: black;
+}
+
+.bean-similarity {
+   color: grey
+}
+
