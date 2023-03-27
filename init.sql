@@ -11,7 +11,7 @@ CREATE TABLE reviews(
 	100g_USD DOUBLE(5,2),
 	origin VARCHAR(32),
 	review VARCHAR(1024)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+);
 
 INSERT INTO reviews VALUE(1,'Ethiopia Shakiso Mormora','Medium-Light','4.7','Ethiopia','Crisply sweet, cocoa-toned. Lemon blossom, roasted cacao nib, date, rice candy, white peppercorn in aroma and cup. Savory-tart structure; delicate, silky mouthfeel. The richly drying finish leads with cocoa-toned, crisply sweet floral notes in the short and a hint of spice (white peppercorn) in the long.');
 INSERT INTO reviews VALUE(2,'Ethiopia Suke Quto','Medium-Light','4.19','Ethiopia','Delicate, sweetly spice-toned. Pink peppercorn, date, myrrh, lavender, roasted cacao nib in aroma and cup. Crisp, spice-toned structure with citrus-like acidity; satiny, very smooth mouthfeel. The crisply sweet finish centers around spice and pungent floral notes.');

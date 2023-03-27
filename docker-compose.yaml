@@ -1,7 +1,7 @@
 version: '3.8'
 services:
     backend_flask_app:
-        container_name: $fiendforbeans_backend_app
+        container_name: ${TEAM_NAME}_backend_app
         ports:
                 - 0.0.0.0:${APP_PORT}:5000
         restart: always
@@ -9,7 +9,7 @@ services:
                 context: ./backend
                 dockerfile: Dockerfile
                 args:
-                        DB_NAME: fiendforbeans
+                        DB_NAME: ${TEAM_NAME}
         depends_on:
                 - db
         environment:
@@ -22,13 +22,13 @@ services:
                                 - flask-network
         command: gunicorn --bind 0.0.0.0:5000 --workers 4 "app:app"
     db:
-        container_name: $fiendforbeans_db
+        container_name: ${TEAM_NAME}_db
         image: mysql:latest
         restart: always
         environment:
                 MYSQL_USER: admin
                 MYSQL_PASSWORD: admin
-                MYSQL_DATABASE: coffeedb
+                MYSQL_DATABASE: coffedb
                 MYSQL_ROOT_PASSWORD: admin
         volumes:
                 - ./init.sql:/docker-entrypoint-initdb.d/init.sql
