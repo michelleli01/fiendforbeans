@@ -28,7 +28,7 @@ services:
         environment:
                 MYSQL_USER: admin
                 MYSQL_PASSWORD: admin
-                MYSQL_DATABASE: coffedb
+                MYSQL_DATABASE: coffeedb
                 MYSQL_ROOT_PASSWORD: admin
         volumes:
                 - ./init.sql:/docker-entrypoint-initdb.d/init.sql
