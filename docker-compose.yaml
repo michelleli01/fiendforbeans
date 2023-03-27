@@ -9,7 +9,7 @@ services:
                 context: ./backend
                 dockerfile: Dockerfile
                 args:
-                        DB_NAME: coffee
+                        DB_NAME: ${TEAM_NAME}
         depends_on:
                 - db
         environment:
