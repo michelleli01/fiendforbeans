@@ -9,7 +9,7 @@ services:
                 context: ./backend
                 dockerfile: Dockerfile
                 args:
-                        DB_NAME: ${TEAM_NAME}
+                        DB_NAME: fiendforbeans
         depends_on:
                 - db
         environment:
@@ -22,13 +22,13 @@ services:
                                 - flask-network
         command: gunicorn --bind 0.0.0.0:5000 --workers 4 "app:app"
     db:
-        container_name: ${TEAM_NAME}_db
+        container_name: $fiendforbeans_db
         image: mysql:latest
         restart: always
         environment:
                 MYSQL_USER: admin
                 MYSQL_PASSWORD: admin
-                MYSQL_DATABASE: kardashiandb
+                MYSQL_DATABASE: coffeedb
                 MYSQL_ROOT_PASSWORD: admin
         volumes:
                 - ./init.sql:/docker-entrypoint-initdb.d/init.sql
