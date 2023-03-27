@@ -3,8 +3,10 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
-  rel="stylesheet" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+  rel="stylesheet"
+/>
 
 <body>
   <link href="styles.css" type="text/html" />
@@ -19,12 +21,18 @@
                 <h1 id="google-0-1">0</h1>
                 <h1 id="google-0-2">0</h1>
             </div> -->
-    <img style="padding-top: 10%; width: 40%; margin-bottom: 1rem" src="/static/images/logo.png"
-      alt="Fiend for Beans logo" />
+    <img
+      style="padding-top: 10%; width: 40%; margin-bottom: 1rem"
+      src="/static/images/logo.png"
+      alt="Fiend for Beans logo"
+    />
     <div class="input-box" onclick="sendFocus()">
-
       <div>
-        <input placeholder="citrus, floral, sweet" id="filter-text-val" oninput="updateButtonStatus()" />
+        <input
+          placeholder="citrus, floral, sweet"
+          id="filter-text-val"
+          oninput="updateButtonStatus()"
+        />
       </div>
       <img src="{{ url_for('static', filename='images/mag.png') }}" />
     </div>
@@ -34,7 +42,7 @@
 
   <script>
     function answerBoxTemplate(title, similarity, titleDesc) {
-      return `<div class=''>
+      return `<div>
                 <h2 class='bean-title'>${title}</h3>
                 <p class='bean-similarity'>Percent Confidence: ${similarity}</p>
                 <p class='bean-desc'>${titleDesc}</p>
@@ -44,32 +52,35 @@
     function updateButtonStatus() {
       const input = document.getElementById('filter-text-val').value;
       const button = document.getElementById('search-button');
-      button.style.color = input === "" ? 'lightgrey' : 'black'
+      button.style.color = input === '' ? 'lightgrey' : 'black';
     }
 
     function sendFocus() {
-      document.getElementById("filter-text-val").focus();
+      document.getElementById('filter-text-val').focus();
     }
 
     function filterText() {
-      document.getElementById("answer-box").innerHTML = "";
-      console.log(document.getElementById("filter-text-val").value);
+      if (document.getElementById('filter-text-val').value === '') return;
+
+      document.getElementById('answer-box').innerHTML = '';
+      console.log(document.getElementById('filter-text-val').value);
       fetch(
-        "http://127.0.0.1:5000/beans?" +
-        new URLSearchParams({
-          query: document.getElementById("filter-text-val").value,
-        }).toString(),
+        'http://127.0.0.1:5000/beans?' +
+          new URLSearchParams({
+            query: document.getElementById('filter-text-val').value,
+          }).toString()
       )
         .then((response) => response.json())
         .then((data) => {
           if (data.length === 0) {
-            const tempDiv = document.createElement('div')
-            tempDiv.innerHTML = "No coffee beans match your query. Please try again :)"
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML =
+              'No coffee beans match your query. Please try again :)';
             tempDiv.style.textAlign = 'center';
-            tempDiv.style.marginTop = '5rem'
-            tempDiv.style.fontSize = "18px"
-            tempDiv.style.fontFamily = "Montserrat, sans-serif";
-            document.getElementById('answer-box').appendChild(tempDiv)
+            tempDiv.style.marginTop = '5rem';
+            tempDiv.style.fontSize = '18px';
+            tempDiv.style.fontFamily = 'Montserrat, sans-serif';
+            document.getElementById('answer-box').appendChild(tempDiv);
             return;
           }
 
@@ -77,18 +88,15 @@
             let bean = d.bean_info;
             let score = d.score;
             let percentConfidence = `${score.toFixed(2) * 100}%`;
-            let tempDiv = document.createElement("div");
+            let tempDiv = document.createElement('div');
             tempDiv.innerHTML = answerBoxTemplate(
               bean.name,
               percentConfidence,
-              bean.review,
+              bean.review
             );
-            document.getElementById("answer-box").appendChild(tempDiv);
-          })
-        }
-
-
-        );
+            document.getElementById('answer-box').appendChild(tempDiv);
+          });
+        });
     }
   </script>
 </body>

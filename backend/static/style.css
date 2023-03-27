@@ -114,3 +114,8 @@ p, .episode-desc{
 .enabled:hover {
     border-color: black;
 }
+
+.bean-similarity {
+   color: grey
+}
+
