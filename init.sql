@@ -11,7 +11,7 @@ CREATE TABLE reviews(
 	100g_USD DOUBLE(5,2),
 	origin VARCHAR(32),
 	review VARCHAR(1024)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 INSERT INTO reviews VALUE(1,'Ethiopia Shakiso Mormora','Medium-Light','4.7','Ethiopia','Crisply sweet, cocoa-toned. Lemon blossom, roasted cacao nib, date, rice candy, white peppercorn in aroma and cup. Savory-tart structure; delicate, silky mouthfeel. The richly drying finish leads with cocoa-toned, crisply sweet floral notes in the short and a hint of spice (white peppercorn) in the long.');
 INSERT INTO reviews VALUE(2,'Ethiopia Suke Quto','Medium-Light','4.19','Ethiopia','Delicate, sweetly spice-toned. Pink peppercorn, date, myrrh, lavender, roasted cacao nib in aroma and cup. Crisp, spice-toned structure with citrus-like acidity; satiny, very smooth mouthfeel. The crisply sweet finish centers around spice and pungent floral notes.');
@@ -1259,3 +1259,4 @@ INSERT INTO reviews VALUE(1243,'Proyecto Aurora','Medium-Light','2.94','Guatemal
 INSERT INTO reviews VALUE(1244,'Finca El Potrero','Medium-Light','2.94','Guatemala','High-toned, enticingly sweet. Black cherry, narcissus, cashew butter, lemon verbena, juniper bark in aroma and cup. Sweet-tart structure with bright acidity; crisp, satiny-smooth mouthfeel. The finish leads with notes of black cherry and lemon verbena, rounding to creamy cashew in the long.');
 INSERT INTO reviews VALUE(1245,'Chacayá Santiago Atitlán','Medium-Light','4.7','Guatemala',' Vibrantly sweet, subtly nuanced. Apricot, dark chocolate, hazelnut, hyacinth, honey in aroma and cup. Sweetly tart structure with brisk acidity; smooth, syrupy mouthfeel. The chocolaty finish is supported by notes of apricot and hazelnut. ');
 INSERT INTO reviews VALUE(1246,'Espresso No. 3','Medium-Light','5.88','Guatemala','Evaluated as espresso. Multi-layered, complex. Dark chocolate, dried apricot, star jasmine, cedar, hazelnut butter in aroma and small cup. Very syrupy mouthfeel; crisply fruit-toned finish. In three parts milk, chocolate and apricot notes are amplified, supported by spicy florals.');
+
