@@ -9,7 +9,7 @@ services:
                 context: ./backend
                 dockerfile: Dockerfile
                 args:
-                        DB_NAME: TEAM_1
+                        DB_NAME: ${TEAM_NAME}
         depends_on:
                 - db
         environment:
@@ -23,15 +23,14 @@ services:
         command: gunicorn --bind 0.0.0.0:5000 --workers 4 "app:app"
     db:
         container_name: ${TEAM_NAME}_db
-        image: mariadb:10.5.8
+        image: mysql:latest
         restart: always
         environment:
-                - MYSQL_USER=admin
-                - MYSQL_PASSWORD=admin
-                - MYSQL_DATABASE=kardashiandb
-                - MYSQL_ROOT_PASSWORD=admin
+                MYSQL_USER: admin
+                MYSQL_PASSWORD: admin
+                MYSQL_DATABASE: kardashiandb
+                MYSQL_ROOT_PASSWORD: admin
         volumes:
-                - flask_volume:/var/lib/mysql
                 - ./init.sql:/docker-entrypoint-initdb.d/init.sql
         networks:
                 - flask_network
