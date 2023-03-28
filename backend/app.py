@@ -247,4 +247,4 @@ def beans_search():
     return get_top_10_rec(query)
 
 
-app.run(debug=True)
+#app.run(debug=True)
