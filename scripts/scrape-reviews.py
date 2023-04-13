@@ -15,10 +15,10 @@ HEADERS = {
 GRAMS_TO_OUNCES = 0.035274
 
 LABELS = {
-    "Roast Level": "Roast",
+    "Roast Level": "roast",
     "Est. Price": "dollars_per_ounce",
-    "Review Date": "Review_date",
-    "Coffee Origin": "Origin",
+    "Review Date": "review_date",
+    "Coffee Origin": "origin",
 }
 
 roasters = set()
@@ -26,7 +26,7 @@ roasters = set()
 
 def write_data_to_csv(data):
     print("Writing data to csv file...")
-    with open("./data/archive/scraped-data.csv", "w") as csv_file:
+    with open("./data/archive/scraped-data.csv", "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
         fields = list(data[0].keys())
         csv_writer.writerow(fields)
@@ -80,12 +80,11 @@ def get_data_from_review_page(link):
             save_roaster_image(
                 img_link, f"./backend/static/images/roaster_logos/{roaster}.webp"
             )
-
     data = {
-        "Roaster": roaster,
-        "Name": soup.find("h1", class_="review-title").text,
-        "Review": review_div.h2.find_next_sibling("p").text,
-        "Roaster_link": roaster_link,
+        "roaster": roaster,
+        "name": soup.find("h1", class_="review-title").text,
+        "review": review_div.h2.find_next_sibling("p").text.replace("\r\n", ""),
+        "roaster_link": roaster_link,
     }
 
     for table_col in soup.find_all("table", class_="review-template-table"):
