@@ -50,37 +50,37 @@
     }
 
     function updateButtonStatus() {
-      const input = document.getElementById('filter-text-val').value;
-      const button = document.getElementById('search-button');
-      button.style.color = input === '' ? 'lightgrey' : 'black';
+      const input = document.getElementById("filter-text-val").value;
+      const button = document.getElementById("search-button");
+      button.style.color = input === "" ? "lightgrey" : "black";
     }
 
     function sendFocus() {
-      document.getElementById('filter-text-val').focus();
+      document.getElementById("filter-text-val").focus();
     }
 
     function filterText() {
-      if (document.getElementById('filter-text-val').value === '') return;
+      if (document.getElementById("filter-text-val").value === "") return;
 
-      document.getElementById('answer-box').innerHTML = '';
-      console.log(document.getElementById('filter-text-val').value);
+      document.getElementById("answer-box").innerHTML = "";
+      console.log(document.getElementById("filter-text-val").value);
       fetch(
-        'http://127.0.0.1:5000/beans?' +
+        "/beans?" +
           new URLSearchParams({
-            query: document.getElementById('filter-text-val').value,
-          }).toString()
+            query: document.getElementById("filter-text-val").value,
+          }).toString(),
       )
         .then((response) => response.json())
         .then((data) => {
           if (data.length === 0) {
-            const tempDiv = document.createElement('div');
+            const tempDiv = document.createElement("div");
             tempDiv.innerHTML =
-              'No coffee beans match your query. Please try again :)';
-            tempDiv.style.textAlign = 'center';
-            tempDiv.style.marginTop = '5rem';
-            tempDiv.style.fontSize = '18px';
-            tempDiv.style.fontFamily = 'Montserrat, sans-serif';
-            document.getElementById('answer-box').appendChild(tempDiv);
+              "No coffee beans match your query. Please try again :)";
+            tempDiv.style.textAlign = "center";
+            tempDiv.style.marginTop = "5rem";
+            tempDiv.style.fontSize = "18px";
+            tempDiv.style.fontFamily = "Montserrat, sans-serif";
+            document.getElementById("answer-box").appendChild(tempDiv);
             return;
           }
 
@@ -88,13 +88,13 @@
             let bean = d.bean_info;
             let score = d.score;
             let percentConfidence = `${score.toFixed(2) * 100}%`;
-            let tempDiv = document.createElement('div');
+            let tempDiv = document.createElement("div");
             tempDiv.innerHTML = answerBoxTemplate(
               bean.name,
               percentConfidence,
-              bean.review
+              bean.review,
             );
-            document.getElementById('answer-box').appendChild(tempDiv);
+            document.getElementById("answer-box").appendChild(tempDiv);
           });
         });
     }

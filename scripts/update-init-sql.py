@@ -1,6 +1,6 @@
 import csv
 
-DATA_FILE_PATH = "./data/archive/simplified_coffee.csv"
+DATA_FILE_PATH = "./data/archive/scraped-data.csv"
 INIT_SQL_PATH = "./init.sql"
 DB_NAME = "coffeedb"
 TABLE_NAME = "reviews"
@@ -9,9 +9,10 @@ TABLE_SCHEMA = {
     "id": "INT",
     "name": "VARCHAR(128)",
     "roast": "VARCHAR(32)",
-    "100g_USD": "DOUBLE(5,2)",
-    "origin": "VARCHAR(32)",
+    "dollars_per_ounce": "DOUBLE(5,2)",
+    "origin": "VARCHAR(128)",
     "review": "VARCHAR(1024)",
+    "roaster_link": "VARCHAR(128)",
 }
 
 
@@ -42,7 +43,7 @@ CREATE TABLE {TABLE_NAME}(
         row_values = f"{idx + 1}"
         for idx in column_idxs:
             value = row[idx].replace("'", "''").replace("%", "%%")
-            row_values += f",'{value}'"
+            row_values += f",NULL" if len(value) == 0 else f",'{value}'"
         file.write(f"INSERT INTO {TABLE_NAME} VALUE({row_values});\n")
     file.close()
 
