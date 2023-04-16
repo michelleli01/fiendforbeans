@@ -43,7 +43,6 @@ def load_data():
 data = load_data()  # string of dictionaries
 data_list = json.loads(data)  # convert to list of dicts
 
-
 # Cosine Sim Algorithm
 def tokenize(text):
     """Returns a list of words that make up the text.
@@ -163,10 +162,17 @@ def accumulate_dot_scores(query_word_counts, index, idf):
                 else:
                     doc_scores[doc_id] = doc_scores[doc_id] + acc
     return doc_scores
-
+#takes in preferred country and output of indexsearch to recommend countries
+def roast_search(results, data_list, roast):
+    roast_output = list()
+    for cossim_val, bean_id in results:
+        bean_info = data_list[bean_id]
+        if (bean_info['roast'] == roast):
+            roast_output.append((cossim_val, bean_id))
+    return roast_output
 
 def index_search(
-    query, index, idf, doc_norms, tokenizer, score_func=accumulate_dot_scores
+    query, roast_value, index, idf, doc_norms, tokenizer, score_func=accumulate_dot_scores
 ):
     """Search the collection of documents for the given query
 
@@ -196,13 +202,19 @@ def index_search(
             idf_weight = 0  # prune to 0
         q_norm += (freq * idf_weight) ** 2
     q_norm = math.sqrt(q_norm)
-
+    
     for doc_id, doc_score in doc_scores.items():
         cossim_val = doc_score / (doc_norms[doc_id] * q_norm)
         results.append((cossim_val, doc_id))
 
     results = sorted(results, key=lambda x: x[0], reverse=True)
-    return results[0:10]  # return first top ten similar
+    roast_results = roast_search(results, data_list, roast_value) #top roast results (may not be anything)
+
+    print(roast_results)
+    difference = set(results) - set(roast_results)
+    final_results = roast_results + list(difference)
+    print(final_results)
+    return final_results[0:10]  # return first top ten similar
 
 
 review_dict = tokenize_reviews(data_list)
@@ -213,13 +225,17 @@ inv_idx = {
     key: val for key, val in inv_idx.items() if key in idf
 }  # prune the terms left out by idf
 bean_doc_norms = compute_doc_norms(inv_idx, idf, len(review_dict))
-
+#directly serch for roast values
+def filter_search(roast):
+    query_sql = f"""SELECT * from reviews WHERE roast =={roast}"""
+    data = mysql_engine.query_selector(query_sql)
+    return list(data)
 
 def get_top_10_rec(
-    query, inv_idx=inv_idx, idf=idf, bean_doc_norms=bean_doc_norms, tokenize=tokenize
+    query, roast_value, inv_idx=inv_idx, idf=idf, bean_doc_norms=bean_doc_norms, tokenize=tokenize
 ):
     output = index_search(
-        query, inv_idx, idf, bean_doc_norms, tokenize
+        query, roast_value, inv_idx, idf, bean_doc_norms, tokenize
     )  # score, doc id
     rec_beans = (
         list()
@@ -243,8 +259,9 @@ def home():
 # return search recommendations
 @app.route("/beans")
 def beans_search():
-    query = request.args.get("query")
-    return get_top_10_rec(query)
+    flavor_prof = request.args.get("flavor_prof")
+    roast_value = request.args.get("roast_value")
+    return get_top_10_rec(flavor_prof, roast_value)
 
 
-#app.run(debug=True)
+app.run(debug=True)
