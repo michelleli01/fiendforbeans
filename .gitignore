@@ -19,3 +19,5 @@ build/
 helpers/*
 
 .vscode/
+
+backend/static/react/*
