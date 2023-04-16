@@ -6,7 +6,6 @@ RUN curl -sL https://deb.nodesource.com/setup_16.x  | bash -
 RUN apt-get -y install nodejs
 
 ENV CONTAINER_HOME=/var/www
-ENV BUILD_PATH=${CONTAINER_HOME}/static/react
 
 ADD . $CONTAINER_HOME
 
