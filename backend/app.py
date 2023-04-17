@@ -112,7 +112,6 @@ def compute_idf(inv_idx, n_docs, min_df=10, max_df_ratio=0.95):
 
 def compute_doc_norms(index, idf, n_docs):
     """Precompute the euclidean norm of each document.
-
     norms: np.array, size: n_docs
         norms[i] = the norm of document i.
     """
@@ -135,10 +134,8 @@ def compute_doc_norms(index, idf, n_docs):
 
 def accumulate_dot_scores(query_word_counts, index, idf):
     """Perform a term-at-a-time iteration to efficiently compute the numerator term of cosine similarity across multiple documents.
-
     Returns
     =======
-
     doc_scores: dict
         Dictionary mapping from doc ID to the final accumulated score for that doc
     """
@@ -175,24 +172,24 @@ def index_search(
     query, roast_value, index, idf, doc_norms, tokenizer, score_func=accumulate_dot_scores
 ):
     """Search the collection of documents for the given query
-
     Returns
     =======
-
     results, list of tuples (score, doc_id)
         Sorted list of results such that the first element has
         the highest score, and `doc_id` points to the document
         with the highest score.
-
     """
     query = query.lower()
     query_tokens = tokenize(query)
     query_word_counts = dict()
 
+
     for word in query_tokens:
         query_word_counts[word] = query_word_counts.get(word, 0) + 1
     results = list()
     doc_scores = score_func(query_word_counts, index, idf)
+
+    print(doc_scores)
     # q_norms
     q_norm = 0
     for term, freq in query_word_counts.items():
@@ -229,6 +226,7 @@ bean_doc_norms = compute_doc_norms(inv_idx, idf, len(review_dict))
 def filter_search(roast):
     query_sql = f"""SELECT * from reviews WHERE roast =={roast}"""
     data = mysql_engine.query_selector(query_sql)
+    print(data)
     return list(data)
 
 def get_top_10_rec(
@@ -264,4 +262,4 @@ def beans_search():
     return get_top_10_rec(flavor_prof, roast_value)
 
 
-#app.run(debug=True)
+app.run(debug=True)
