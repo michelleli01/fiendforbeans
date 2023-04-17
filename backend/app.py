@@ -36,7 +36,7 @@ CORS(app)
 def load_data():
     query_sql = f"""SELECT * from reviews"""
     data = mysql_engine.query_selector(query_sql)
-    keys = ["id", "name", "roast", "100g_USD", "origin", "review"]
+    keys = ["id", "roaster", "name", "roast", "dollars_per_ounce", "origin", "review", "roaster_link"]
     return json.dumps([dict(zip(keys, i)) for i in data])
 
 
@@ -202,7 +202,7 @@ def index_search(
             idf_weight = 0  # prune to 0
         q_norm += (freq * idf_weight) ** 2
     q_norm = math.sqrt(q_norm)
-    
+
     for doc_id, doc_score in doc_scores.items():
         cossim_val = doc_score / (doc_norms[doc_id] * q_norm)
         results.append((cossim_val, doc_id))

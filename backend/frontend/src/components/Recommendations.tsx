@@ -19,11 +19,14 @@ export default function Recommendations({
         <div>
           {recommend.map((bean) => (
             <AnswerBox
-              key={bean.bean_info.name}
+              key={bean.bean_info.id}
               title={bean.bean_info.name}
               roast={bean.bean_info.roast}
+              roaster={bean.bean_info.roaster}
               similarity={bean.score}
               titleDesc={bean.bean_info.review}
+              price={bean.bean_info.dollars_per_ounce}
+              roasterLink={bean.bean_info.roaster_link}
             />
           ))}
         </div>

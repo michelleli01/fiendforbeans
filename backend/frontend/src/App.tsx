@@ -31,6 +31,7 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         setRecommend(data);
+        console.log(data);
       });
   };
   return (
