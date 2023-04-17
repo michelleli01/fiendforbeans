@@ -202,7 +202,7 @@ def index_search(
             idf_weight = 0  # prune to 0
         q_norm += (freq * idf_weight) ** 2
     q_norm = math.sqrt(q_norm)
-    
+
     for doc_id, doc_score in doc_scores.items():
         cossim_val = doc_score / (doc_norms[doc_id] * q_norm)
         results.append((cossim_val, doc_id))
@@ -264,4 +264,4 @@ def beans_search():
     return get_top_10_rec(flavor_prof, roast_value)
 
 
-app.run(debug=True)
+#app.run(debug=True)
