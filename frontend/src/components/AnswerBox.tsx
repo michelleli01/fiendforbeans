@@ -1,4 +1,5 @@
 import React from "react";
+import "../styles/AnswerBox.css";
 
 type AnswerBoxProps = {
   title: string;
@@ -14,7 +15,7 @@ export default function AnswerBox({
   titleDesc,
 }: AnswerBoxProps): JSX.Element {
   return (
-    <div>
+    <div className="box">
       <h2 className="bean-title">{title}</h2>
       <p className="bean-similarity">
         Percent Confidence: {(similarity * 100).toFixed(2)}%
