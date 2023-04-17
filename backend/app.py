@@ -17,7 +17,6 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
 MYSQL_USER_PASSWORD = ""
-# "MayankRao16Cornell.edu"
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
 
@@ -437,4 +436,4 @@ def beans_search():
     return get_top_10_rec(flavor_prof, roast_value)
 
 
-app.run(debug=True)
+# app.run(debug=True)
