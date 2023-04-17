@@ -16,7 +16,7 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "MayankRao16Cornell.edu"
+MYSQL_USER_PASSWORD = ""
 # "MayankRao16Cornell.edu"
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
@@ -36,12 +36,22 @@ CORS(app)
 def load_data():
     query_sql = f"""SELECT * from reviews"""
     data = mysql_engine.query_selector(query_sql)
-    keys = ["id", "name", "roast", "100g_USD", "origin", "review"]
+    keys = [
+        "id",
+        "name",
+        "roaster",
+        "roast",
+        "dollars_per_ounce",
+        "origin",
+        "review",
+        "roaster_link",
+    ]
     return json.dumps([dict(zip(keys, i)) for i in data])
 
 
 data = load_data()  # string of dictionaries
 data_list = json.loads(data)  # convert to list of dicts
+
 
 # Cosine Sim Algorithm
 def tokenize(text):
@@ -159,17 +169,26 @@ def accumulate_dot_scores(query_word_counts, index, idf):
                 else:
                     doc_scores[doc_id] = doc_scores[doc_id] + acc
     return doc_scores
-#takes in preferred country and output of indexsearch to recommend countries
+
+
+# takes in preferred country and output of indexsearch to recommend countries
 def roast_search(results, data_list, roast):
     roast_output = list()
     for cossim_val, bean_id in results:
         bean_info = data_list[bean_id]
-        if (bean_info['roast'] == roast):
+        if bean_info["roast"] == roast:
             roast_output.append((cossim_val, bean_id))
     return roast_output
 
+
 def index_search(
-    query, roast_value, index, idf, doc_norms, tokenizer, score_func=accumulate_dot_scores
+    query,
+    roast_value,
+    index,
+    idf,
+    doc_norms,
+    tokenizer,
+    score_func=accumulate_dot_scores,
 ):
     """Search the collection of documents for the given query
     Returns
@@ -182,7 +201,6 @@ def index_search(
     query = query.lower()
     query_tokens = tokenize(query)
     query_word_counts = dict()
-
 
     for word in query_tokens:
         query_word_counts[word] = query_word_counts.get(word, 0) + 1
@@ -205,7 +223,9 @@ def index_search(
         results.append((cossim_val, doc_id))
 
     results = sorted(results, key=lambda x: x[0], reverse=True)
-    roast_results = roast_search(results, data_list, roast_value) #top roast results (may not be anything)
+    roast_results = roast_search(
+        results, data_list, roast_value
+    )  # top roast results (may not be anything)
 
     print(roast_results)
     difference = set(results) - set(roast_results)
@@ -222,15 +242,23 @@ inv_idx = {
     key: val for key, val in inv_idx.items() if key in idf
 }  # prune the terms left out by idf
 bean_doc_norms = compute_doc_norms(inv_idx, idf, len(review_dict))
-#directly serch for roast values
+
+
+# directly serch for roast values
 def filter_search(roast):
     query_sql = f"""SELECT * from reviews WHERE roast =={roast}"""
     data = mysql_engine.query_selector(query_sql)
     print(data)
     return list(data)
 
+
 def get_top_10_rec(
-    query, roast_value, inv_idx=inv_idx, idf=idf, bean_doc_norms=bean_doc_norms, tokenize=tokenize
+    query,
+    roast_value,
+    inv_idx=inv_idx,
+    idf=idf,
+    bean_doc_norms=bean_doc_norms,
+    tokenize=tokenize,
 ):
     output = index_search(
         query, roast_value, inv_idx, idf, bean_doc_norms, tokenize
@@ -262,4 +290,4 @@ def beans_search():
     return get_top_10_rec(flavor_prof, roast_value)
 
 
-app.run(debug=True)
+# app.run(debug=True)
