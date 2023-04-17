@@ -28,7 +28,12 @@ mysql_engine = MySQLDatabaseHandler(
 # Path to init.sql file. This file can be replaced with your own file for testing on localhost, but do NOT move the init.sql file
 mysql_engine.load_file_into_db()
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder="static/react",
+    template_folder="static/react",
+    static_url_path="",
+)
 CORS(app)
 
 
@@ -36,12 +41,13 @@ CORS(app)
 def load_data():
     query_sql = f"""SELECT * from reviews"""
     data = mysql_engine.query_selector(query_sql)
-    keys = ["id", "roaster", "name", "roast", "dollars_per_ounce", "origin", "review", "roaster_link"]
+    keys = ["id", "name", "roast", "100g_USD", "origin", "review"]
     return json.dumps([dict(zip(keys, i)) for i in data])
 
 
 data = load_data()  # string of dictionaries
 data_list = json.loads(data)  # convert to list of dicts
+
 
 # Cosine Sim Algorithm
 def tokenize(text):
@@ -112,7 +118,6 @@ def compute_idf(inv_idx, n_docs, min_df=10, max_df_ratio=0.95):
 
 def compute_doc_norms(index, idf, n_docs):
     """Precompute the euclidean norm of each document.
-
     norms: np.array, size: n_docs
         norms[i] = the norm of document i.
     """
@@ -135,10 +140,8 @@ def compute_doc_norms(index, idf, n_docs):
 
 def accumulate_dot_scores(query_word_counts, index, idf):
     """Perform a term-at-a-time iteration to efficiently compute the numerator term of cosine similarity across multiple documents.
-
     Returns
     =======
-
     doc_scores: dict
         Dictionary mapping from doc ID to the final accumulated score for that doc
     """
@@ -162,28 +165,34 @@ def accumulate_dot_scores(query_word_counts, index, idf):
                 else:
                     doc_scores[doc_id] = doc_scores[doc_id] + acc
     return doc_scores
-#takes in preferred country and output of indexsearch to recommend countries
+
+
+# takes in preferred country and output of indexsearch to recommend countries
 def roast_search(results, data_list, roast):
     roast_output = list()
     for cossim_val, bean_id in results:
         bean_info = data_list[bean_id]
-        if (bean_info['roast'] == roast):
+        if bean_info["roast"] == roast:
             roast_output.append((cossim_val, bean_id))
     return roast_output
 
+
 def index_search(
-    query, roast_value, index, idf, doc_norms, tokenizer, score_func=accumulate_dot_scores
+    query,
+    roast_value,
+    index,
+    idf,
+    doc_norms,
+    tokenizer,
+    score_func=accumulate_dot_scores,
 ):
     """Search the collection of documents for the given query
-
     Returns
     =======
-
     results, list of tuples (score, doc_id)
         Sorted list of results such that the first element has
         the highest score, and `doc_id` points to the document
         with the highest score.
-
     """
     query = query.lower()
     query_tokens = tokenize(query)
@@ -208,7 +217,9 @@ def index_search(
         results.append((cossim_val, doc_id))
 
     results = sorted(results, key=lambda x: x[0], reverse=True)
-    roast_results = roast_search(results, data_list, roast_value) #top roast results (may not be anything)
+    roast_results = roast_search(
+        results, data_list, roast_value
+    )  # top roast results (may not be anything)
 
     print(roast_results)
     difference = set(results) - set(roast_results)
@@ -225,14 +236,22 @@ inv_idx = {
     key: val for key, val in inv_idx.items() if key in idf
 }  # prune the terms left out by idf
 bean_doc_norms = compute_doc_norms(inv_idx, idf, len(review_dict))
-#directly serch for roast values
+
+
+# directly serch for roast values
 def filter_search(roast):
     query_sql = f"""SELECT * from reviews WHERE roast =={roast}"""
     data = mysql_engine.query_selector(query_sql)
     return list(data)
 
+
 def get_top_10_rec(
-    query, roast_value, inv_idx=inv_idx, idf=idf, bean_doc_norms=bean_doc_norms, tokenize=tokenize
+    query,
+    roast_value,
+    inv_idx=inv_idx,
+    idf=idf,
+    bean_doc_norms=bean_doc_norms,
+    tokenize=tokenize,
 ):
     output = index_search(
         query, roast_value, inv_idx, idf, bean_doc_norms, tokenize
@@ -253,7 +272,7 @@ def get_top_10_rec(
 # renders home page
 @app.route("/")
 def home():
-    return render_template("base.html", title="sample html")
+    return render_template("index.html")
 
 
 # return search recommendations
