@@ -10,6 +10,7 @@ TABLE_NAME = "reviews"
 TABLE_SCHEMA = {
     "id": "INT",
     "name": "VARCHAR(128)",
+    "roaster": "VARCHAR(128)",
     "roast": "VARCHAR(32)",
     "dollars_per_ounce": "DOUBLE(5,2)",
     "origin": "VARCHAR(128)",
