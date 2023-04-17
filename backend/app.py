@@ -16,7 +16,7 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = ""
+MYSQL_USER_PASSWORD = "Aa032819032819"
 # "MayankRao16Cornell.edu"
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
@@ -89,7 +89,8 @@ def build_inverted_index(review_dict):
         # create a temp dict for count of words in tokenized_dict
         temp_dict = {}
         for token in review:
-            temp_dict[token] = temp_dict.get(token, 0) + 1  # get count of each token
+            temp_dict[token] = temp_dict.get(
+                token, 0) + 1  # get count of each token
 
         # go thru every word in temp_dict
         for word, count in temp_dict.items():
@@ -282,37 +283,7 @@ for key, value in flavor_cat.items():
 # Jaccard Similarity
 
 
-def jacc_similarity(query_cat, coffee_data):
-    """Finds the Jaccard Similarity between bean's categories
-
-    Returns
-    =======
-
-    jacc_scores is a dictionary mapping each bean to the jaccard similarity score between
-    its flavor categories and the users query categories
-
-    Parameters
-    =======
-    query_cat: type list, tokenized list of input query
-    coffee_data: list of dictionaries that represent each type of coffee bean
-
-    """
-    jacc_scores = dict()
-
-    for bean in coffee_data:
-        coffee_cat = bean["flavor"]  # TODO
-        doc_id = bean["id"]
-        if query_cat != [] and coffee_cat != []:
-            jacc_scores[doc_id] = len(np.intersect1d(query_cat, coffee_cat)) / len(
-                np.union1d(query_cat, coffee_cat)
-            )
-
-    return jacc_scores
-
-
 # cosine search
-
-
 def index_search(
     query,
     roast_value,
@@ -367,7 +338,7 @@ def index_search(
 
 
 def jaccard_search(
-    query, coffee_data, n_jacc, tokenizer=tokenize, score_func=jacc_similarity
+    query, coffee_data, n_jacc, tokenizer=tokenize
 ):
     """Finds the Jaccard Similarity between bean's categories
 
@@ -385,17 +356,21 @@ def jaccard_search(
     for qt in query_tokens:
         if rev_flavor_cat[qt] != None:
             query_categories.append(rev_flavor_cat[qt])
+    print(query_categories)
 
     results = list()
 
     for bean in coffee_data:
-        coffee_cat = bean["flavor"]  # TODO
+        coffee_cat = bean["flavor"][1: -1].split(", ")
+        coffee_cat = [cat.replace("'", '') for cat in coffee_cat]
         doc_id = bean["id"]
         if query_categories != [] and coffee_cat != []:
             jacc_score = len(np.intersect1d(query_categories, coffee_cat)) / len(
                 np.union1d(query_categories, coffee_cat)
             )
             results.append((jacc_score, doc_id))
+            print(jacc_score)
+
     results = sorted(results, key=lambda x: x[0], reverse=True)
     return results[0:n_jacc]
 
@@ -449,13 +424,13 @@ def get_top_10_rec(
 
 
 # renders home page
-@app.route("/")
+@ app.route("/")
 def home():
     return render_template("base.html", title="sample html")
 
 
 # return search recommendations
-@app.route("/beans")
+@ app.route("/beans")
 def beans_search():
     flavor_prof = request.args.get("flavor_prof")
     roast_value = request.args.get("roast_value")
