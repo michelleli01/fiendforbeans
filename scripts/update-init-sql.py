@@ -1,10 +1,12 @@
 import csv
 
+# change this to the path to the csv file to write into init.sql
 DATA_FILE_PATH = "./data/archive/scraped-data.csv"
 INIT_SQL_PATH = "./init.sql"
 DB_NAME = "coffeedb"
 TABLE_NAME = "reviews"
 
+# keys should correspond to table names in csv file
 TABLE_SCHEMA = {
     "id": "INT",
     "name": "VARCHAR(128)",
