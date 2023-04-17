@@ -16,7 +16,7 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "MayankRao16Cornell.edu"
+MYSQL_USER_PASSWORD = "Aa032819032819"
 # "MayankRao16Cornell.edu"
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
@@ -34,7 +34,7 @@ CORS(app)
 
 # load data into a dict
 def load_data():
-    query_sql = f"""SELECT * from reviews"""
+    query_sql = """SELECT * from reviews"""
     data = mysql_engine.query_selector(query_sql)
     keys = ["id", "name", "roast", "100g_USD", "origin", "review"]
     return json.dumps([dict(zip(keys, i)) for i in data])
@@ -44,6 +44,8 @@ data = load_data()  # string of dictionaries
 data_list = json.loads(data)  # convert to list of dicts
 
 # Cosine Sim Algorithm
+
+
 def tokenize(text):
     """Returns a list of words that make up the text.
     Params: {text: String}
@@ -76,7 +78,8 @@ def build_inverted_index(review_dict):
         # create a temp dict for count of words in tokenized_dict
         temp_dict = {}
         for token in review:
-            temp_dict[token] = temp_dict.get(token, 0) + 1  # get count of each token
+            temp_dict[token] = temp_dict.get(
+                token, 0) + 1  # get count of each token
 
         # go thru every word in temp_dict
         for word, count in temp_dict.items():
@@ -162,7 +165,9 @@ def accumulate_dot_scores(query_word_counts, index, idf):
                 else:
                     doc_scores[doc_id] = doc_scores[doc_id] + acc
     return doc_scores
-#takes in preferred country and output of indexsearch to recommend countries
+# takes in preferred country and output of indexsearch to recommend countries
+
+
 def roast_search(results, data_list, roast):
     roast_output = list()
     for cossim_val, bean_id in results:
@@ -170,6 +175,71 @@ def roast_search(results, data_list, roast):
         if (bean_info['roast'] == roast):
             roast_output.append((cossim_val, bean_id))
     return roast_output
+
+
+# categorization
+fruit = ['blackberry', 'raspberry', 'blueberry', 'strawberry', 'raisin', 'prune', 'coconut', 'cherry', 'pomegranate', 'pineapple', 'grape',
+         'apple', 'peach', 'pear', 'grapefruit', 'orange', 'lemon', 'lime', 'citrus', 'berry', 'fruit']
+
+floral = ['jasmine', 'rose', 'chamomile', 'tea', 'floral']
+
+sweet = ['aromatic', 'vanilla', 'sugar', 'honey',
+         'caramelized', 'maple', 'syrup', 'molasses', 'sweet']
+
+nutty = ['almond', 'hazelnut', 'peanuts', 'nutty']
+
+cocoa = ['chocolate', 'cocoa', 'cacao']
+
+spice = ['clove', 'cinnamon', 'nutmeg', 'anise', 'pepper', 'pungent', 'spice']
+
+roasted = ['cereal', 'malt', 'grain', 'brown', 'roast',
+           'burnt', 'smoky', 'ashy', 'acrid', 'tobacco']
+
+chemical = ['chemical', 'rubber', 'medicinal', 'salty', 'bitter']
+
+papery = ['phenolic', 'meaty', 'brothy', 'animalic', 'musty', 'earthy', 'dusty', 'damp', 'woody',
+          'papery', 'cardboard', 'stale']
+
+flavor_cat = {'fruit': fruit, 'floral': floral, 'sweet': sweet, 'nutty': nutty, 'cocoa': cocoa, 'spice': spice,
+              'roasted': roasted, 'chemical': chemical, 'papery': papery}
+
+# reverse index
+rev_flavor_cat = {}
+for key, value in flavor_cat.items():
+    for v in range(len(value)):
+        rev_flavor_cat[value[v]] = key
+
+# Jaccard Similarity
+
+
+def jacc_similarity(query_cat, coffee_data):
+    """Finds the Jaccard Similarity between bean's categories
+
+    Returns
+    =======
+
+    jacc_scores is a dictionary mapping each bean to the jaccard similarity score between
+    its flavor categories and the users query categories
+
+    Parameters
+    =======
+    query_cat: type list, tokenized list of input query
+    coffee_data: list of dictionaries that represent each type of coffee bean
+
+    """
+    jacc_scores = dict()
+
+    for bean in coffee_data:
+        coffee_cat = bean["flavor"]  # TODO
+        doc_id = bean["id"]
+        if query_cat != [] and coffee_cat != []:
+            jacc_scores[doc_id] = len(np.intersect1d(
+                query_cat, coffee_cat))/len(np.union1d(query_cat, coffee_cat))
+
+    return jacc_scores
+
+# cosine search
+
 
 def index_search(
     query, roast_value, index, idf, doc_norms, tokenizer, score_func=accumulate_dot_scores
@@ -208,13 +278,46 @@ def index_search(
         results.append((cossim_val, doc_id))
 
     results = sorted(results, key=lambda x: x[0], reverse=True)
-    roast_results = roast_search(results, data_list, roast_value) #top roast results (may not be anything)
+    # top roast results (may not be anything)
+    roast_results = roast_search(results, data_list, roast_value)
 
     print(roast_results)
     difference = set(results) - set(roast_results)
     final_results = roast_results + list(difference)
     print(final_results)
-    return final_results[0:10]  # return first top ten similar
+    return final_results[0:10]
+
+
+def jaccard_search(query, coffee_data, n_jacc, tokenizer=tokenize, score_func=jacc_similarity
+                   ):
+    """Finds the Jaccard Similarity between bean's categories
+
+    Returns
+    =======
+
+    jacc_scores is a dictionary mapping each bean to the jaccard similarity score between
+    its flavor categories and the users query categories
+    """
+    query = query.lower()
+    query_tokens = tokenize(query)
+    results = list()
+    # getting the query categories
+    query_categories = []
+    for qt in query_tokens:
+        if rev_flavor_cat[qt] != None:
+            query_categories.append(rev_flavor_cat[qt])
+
+    results = list()
+
+    for bean in coffee_data:
+        coffee_cat = bean["flavor"]  # TODO
+        doc_id = bean["id"]
+        if query_categories != [] and coffee_cat != []:
+            jacc_score = len(np.intersect1d(
+                query_categories, coffee_cat))/len(np.union1d(query_categories, coffee_cat))
+            results.append((jacc_score), doc_id)
+    results = sorted(results, key=lambda x: x[0], reverse=True)
+    return results[0:n_jacc]
 
 
 review_dict = tokenize_reviews(data_list)
@@ -225,14 +328,17 @@ inv_idx = {
     key: val for key, val in inv_idx.items() if key in idf
 }  # prune the terms left out by idf
 bean_doc_norms = compute_doc_norms(inv_idx, idf, len(review_dict))
-#directly serch for roast values
+# directly serch for roast values
+
+
 def filter_search(roast):
     query_sql = f"""SELECT * from reviews WHERE roast =={roast}"""
     data = mysql_engine.query_selector(query_sql)
     return list(data)
 
+
 def get_top_10_rec(
-    query, roast_value, inv_idx=inv_idx, idf=idf, bean_doc_norms=bean_doc_norms, tokenize=tokenize
+    query, roast_value, coffee_data=data_list, inv_idx=inv_idx, idf=idf, bean_doc_norms=bean_doc_norms, tokenize=tokenize
 ):
     output = index_search(
         query, roast_value, inv_idx, idf, bean_doc_norms, tokenize
@@ -243,6 +349,13 @@ def get_top_10_rec(
     for score, bean_id in output:
         bean_info = data_list[bean_id]
         rec_beans.append({"bean_info": bean_info, "score": score})
+
+    if len(rec_beans) != 10:
+        jacc_results = jaccard_search(
+            query, coffee_data, 10-len(rec_beans))
+        for jr in jacc_results:
+            bean_info = data_list[jr[0]]
+            rec_beans.append({"bean_info": bean_info, "score": score})
     return rec_beans
 
 
@@ -264,4 +377,4 @@ def beans_search():
     return get_top_10_rec(flavor_prof, roast_value)
 
 
-#app.run(debug=True)
+app.run(debug=True)
