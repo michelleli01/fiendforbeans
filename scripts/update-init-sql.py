@@ -16,6 +16,7 @@ TABLE_SCHEMA = {
     "origin": "VARCHAR(128)",
     "review": "VARCHAR(1024)",
     "roaster_link": "VARCHAR(128)",
+    "flavor": "VARCHAR(512)",
 }
 
 

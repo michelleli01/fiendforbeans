@@ -45,6 +45,7 @@ def load_data():
         "origin",
         "review",
         "roaster_link",
+        "flavor",
     ]
     return json.dumps([dict(zip(keys, i)) for i in data])
 
@@ -394,7 +395,7 @@ def jaccard_search(
             jacc_score = len(np.intersect1d(query_categories, coffee_cat)) / len(
                 np.union1d(query_categories, coffee_cat)
             )
-            results.append((jacc_score), doc_id)
+            results.append((jacc_score, doc_id))
     results = sorted(results, key=lambda x: x[0], reverse=True)
     return results[0:n_jacc]
 
@@ -436,10 +437,10 @@ def get_top_10_rec(
         rec_beans.append({"bean_info": bean_info, "score": score})
 
     if len(rec_beans) != 10:
-        jacc_results = jaccard_search(query, coffee_data, 10 - len(rec_beans))
+        jacc_results = jaccard_search(query, data_list, 10 - len(rec_beans))
         for jr in jacc_results:
-            bean_info = data_list[jr[0]]
-            rec_beans.append({"bean_info": bean_info, "score": score})
+            bean_info = data_list[jr[1]]
+            rec_beans.append({"bean_info": bean_info, "score": jr[0]})
     return rec_beans
 
 
