@@ -283,4 +283,4 @@ def beans_search():
     return get_top_10_rec(flavor_prof, roast_value)
 
 
-app.run(debug=True)
+#app.run(debug=True)
