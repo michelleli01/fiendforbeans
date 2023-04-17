@@ -35,27 +35,25 @@
           oninput="updateButtonStatus()"
         />
       </div>
-    <!--       <img src="{{ url_for('static', filename='images/mag.png') }}" />-->
-      
-
+      <!--       <img src="{{ url_for('static', filename='images/mag.png') }}" />-->
     </div>
-    
+
     <label for="dropdown">Select which roast you prefer.</label>
     <div class="dropdown">
       <select
-      name="roast"
-      id="roast_select"
-      onchange="updateRoast(this.value);"
-    >
-    <option value="Light" selected>Light</option>
-    <option value="Medium-Light">Medium-Light</option>
-    <option value="Medium">Medium</option>
-    <option value="Medium-Dark">Medium-Dark</option>
-    <option value="Dark">Dark</option>
+        name="roast"
+        id="roast_select"
+        onchange="updateRoast(this.value);"
+      >
+        <option value="Light" selected>Light</option>
+        <option value="Medium-Light">Medium-Light</option>
+        <option value="Medium">Medium</option>
+        <option value="Medium-Dark">Medium-Dark</option>
+        <option value="Dark">Dark</option>
       </select>
-      </div>
+    </div>
 
-    <!-- 
+    <!--
     <label for="input-box">Enter preferred country of origin.</label>
     <div class="input-box" onclick="sendFocus(2)">
       <div>
@@ -67,8 +65,8 @@
       </div>
     </div>
     -->
-  </br>
-    <button id="search-button" onCLick="filterText()">Search</button>
+    <br />
+    <button id="search-button" onClick="filterText()">Search</button>
   </div>
   <div id="answer-box"></div>
 
@@ -76,17 +74,16 @@
     var flavor_prof = document.getElementById("filter-text-val").value;
     var roast_value = document.getElementById("roast_select").value;
 
-    function updateFlavorProf(){
+    function updateFlavorProf() {
       flavor_prof = document.getElementById("filter-text-val").value;
     }
 
-    function updateRoast(){
+    function updateRoast() {
       roast_value = document.getElementById("roast_select").value;
-      console.log(roast_value)
     }
     function answerBoxTemplate(title, similarity, titleDesc, roast) {
       return `<div>
-                <h2 class='bean-title'>${title}</h3>
+                <h2 class='bean-title'>${title}</h2>
                 <p class='bean-similarity'>Percent Confidence: ${similarity}</p>
                 <p class='bean-similarity'>Roast: ${roast}</p>
                 <p class='bean-desc'>${titleDesc}</p>
@@ -100,13 +97,9 @@
     }
 
     function sendFocus() {
-
-        document.getElementById("filter-text-val").focus();
-        document.getElementById("roast-text-val").focus(); 
-
-      }
-
-    
+      document.getElementById("filter-text-val").focus();
+      document.getElementById("roast-text-val").focus();
+    }
 
     function filterText() {
       if (document.getElementById("filter-text-val").value === "") return;
@@ -119,8 +112,7 @@
         "/beans?" +
           new URLSearchParams({
             flavor_prof: document.getElementById("filter-text-val").value,
-            roast_value: document.getElementById("roast_select").value
-
+            roast_value: document.getElementById("roast_select").value,
           }).toString(),
       )
         .then((response) => response.json())
@@ -146,7 +138,7 @@
               bean.name,
               percentConfidence,
               bean.review,
-              bean.roast
+              bean.roast,
             );
             document.getElementById("answer-box").appendChild(tempDiv);
           });
