@@ -1,7 +1,7 @@
 import csv
 
 # change this to the path to the csv file to write into init.sql
-DATA_FILE_PATH = "./data/archive/scraped_category.csv"
+DATA_FILE_PATH = "./data/archive/scraped-categories-2.csv"
 INIT_SQL_PATH = "./init.sql"
 DB_NAME = "coffeedb"
 TABLE_NAME = "reviews"
