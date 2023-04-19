@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/static/css/main.489262b0.css",
+    "main.js": "/static/js/main.3420e9ab.js",
+    "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
+    "static/media/logo.png": "/static/media/logo.051e96e13f4067d13f2e.png",
+    "static/media/Barrington Coffee Roasting.webp": "/static/media/Barrington Coffee Roasting.61296d6c015fc520b420.webp",
+    "static/media/Big Island Coffee Roasters.webp": "/static/media/Big Island Coffee Roasters.abc9657136d78b272995.webp",
+    "static/media/Baba Java Coffee.webp": "/static/media/Baba Java Coffee.cdd05370bee51e5b8b43.webp",
+    "static/media/Amavida Coffee Roasters.webp": "/static/media/Amavida Coffee Roasters.a7b92ad814305fec4149.webp",
+    "index.html": "/index.html",
+    "main.489262b0.css.map": "/static/css/main.489262b0.css.map",
+    "main.3420e9ab.js.map": "/static/js/main.3420e9ab.js.map",
+    "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.489262b0.css",
+    "static/js/main.3420e9ab.js"
+  ]
+}
