@@ -7,8 +7,8 @@ RUN apt-get -y install nodejs
 
 ENV CONTAINER_HOME=/var/www
 
-ADD ./backend $CONTAINER_HOME
-ADD ./frontend $CONTAINER_HOME
+ADD backend ${CONTAINER_HOME}/backend
+ADD frontend ${CONTAINER_HOME}/frontend
 
 WORKDIR ${CONTAINER_HOME}/frontend
 RUN npm ci
@@ -19,4 +19,4 @@ WORKDIR ${CONTAINER_HOME}/backend
 ARG DB_NAME
 ENV DB_NAME $DB_NAME
 
-RUN pip install -r ${CONTAINER_HOME}/requirements.txt
+RUN pip install -r ${CONTAINER_HOME}/backend/requirements.txt
