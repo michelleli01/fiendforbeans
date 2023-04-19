@@ -7,13 +7,14 @@ RUN apt-get -y install nodejs
 
 ENV CONTAINER_HOME=/var/www
 
-ADD . $CONTAINER_HOME
+ADD ./backend $CONTAINER_HOME
+ADD ./frontend $CONTAINER_HOME
 
-WORKDIR ${CONTAINER_HOME}/react-app
+WORKDIR ${CONTAINER_HOME}/frontend
 RUN npm ci
 RUN npm run build
 
-WORKDIR $CONTAINER_HOME
+WORKDIR $CONTAINER_HOME/backend
 
 ARG DB_NAME
 ENV DB_NAME $DB_NAME

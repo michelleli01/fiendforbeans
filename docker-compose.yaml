@@ -1,40 +1,40 @@
 version: '3.8'
 services:
-    backend_flask_app:
-        container_name: fiendforbeans_backend_app
-        ports:
-                - 0.0.0.0:4516:5000
-        restart: always
-        build:
-                context: ./backend
-                dockerfile: Dockerfile
-                args:
-                        DB_NAME: fiendforbeans
-        depends_on:
-                - db
-        environment:
-                - FLASK_APP=app.py
-                - FLASK_RUN_HOST=0.0.0.0
-                - FLASK_DEBUG=0
-        networks:
-                flask_network:
-                        aliases:
-                                - flask-network
-        command: gunicorn --bind 0.0.0.0:5000 --workers 4 "app:app"
-    db:
-        container_name: fiendforbeans_db
-        image: mysql:latest
-        restart: always
-        environment:
-                MYSQL_USER: admin
-                MYSQL_PASSWORD: admin
-                MYSQL_DATABASE: coffeedb
-                MYSQL_ROOT_PASSWORD: admin
-        volumes:
-                - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-        networks:
-                - flask_network
+  backend_flask_app:
+    container_name: fiendforbeans_backend_app
+    ports:
+      - 0.0.0.0:4516:5000
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        DB_NAME: fiendforbeans
+    depends_on:
+      - db
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_DEBUG=0
+    networks:
+      flask_network:
+        aliases:
+          - flask-network
+    command: gunicorn --bind 0.0.0.0:5000 --workers 4 "app:app"
+  db:
+    container_name: fiendforbeans_db
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_DATABASE: coffeedb
+      MYSQL_ROOT_PASSWORD: admin
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - flask_network
 volumes:
-        flask_volume:
+  flask_volume:
 networks:
-        flask_network:
+  flask_network:
