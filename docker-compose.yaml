@@ -20,7 +20,7 @@ services:
       flask_network:
         aliases:
           - flask-network
-    command: gunicorn --bind 0.0.0.0:5000 --workers 4 "backend.app:app"
+    command: gunicorn --bind 0.0.0.0:5000 --workers 4 "app:app"
   db:
     container_name: fiendforbeans_db
     image: mysql:latest
