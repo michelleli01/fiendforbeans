@@ -27,7 +27,7 @@ services:
     restart: always
     environment:
       - MYSQL_USER=admin
-      - MYSQL_PASSWORD=admins
+      - MYSQL_PASSWORD=admin
       - MYSQL_DATABASE=coffeedb
       - MYSQL_ROOT_PASSWORD=admin
     volumes:
