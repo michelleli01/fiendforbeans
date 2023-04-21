@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<title>Fiend 4 Beans</title>
+<title>Fiend 4 Beans - testing deployment</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -71,15 +71,15 @@
   <div id="answer-box"></div>
 
   <script>
-    var flavor_prof = document.getElementById("filter-text-val").value;
-    var roast_value = document.getElementById("roast_select").value;
+    var flavor_prof = document.getElementById('filter-text-val').value;
+    var roast_value = document.getElementById('roast_select').value;
 
     function updateFlavorProf() {
-      flavor_prof = document.getElementById("filter-text-val").value;
+      flavor_prof = document.getElementById('filter-text-val').value;
     }
 
     function updateRoast() {
-      roast_value = document.getElementById("roast_select").value;
+      roast_value = document.getElementById('roast_select').value;
       console.log(roast_value);
     }
     function answerBoxTemplate(title, similarity, titleDesc, roast) {
@@ -92,41 +92,41 @@
     }
 
     function updateButtonStatus() {
-      const input = document.getElementById("filter-text-val").value;
-      const button = document.getElementById("search-button").value;
-      button.style.color = input === "" ? "lightgrey" : "black";
+      const input = document.getElementById('filter-text-val').value;
+      const button = document.getElementById('search-button').value;
+      button.style.color = input === '' ? 'lightgrey' : 'black';
     }
 
     function sendFocus() {
-      document.getElementById("filter-text-val").focus();
-      document.getElementById("roast-text-val").focus();
+      document.getElementById('filter-text-val').focus();
+      document.getElementById('roast-text-val').focus();
     }
 
     function filterText() {
-      if (document.getElementById("filter-text-val").value === "") return;
+      if (document.getElementById('filter-text-val').value === '') return;
 
-      document.getElementById("answer-box").innerHTML = "";
-      console.log(document.getElementById("filter-text-val").value);
-      console.log(document.getElementById("roast_select").value);
+      document.getElementById('answer-box').innerHTML = '';
+      console.log(document.getElementById('filter-text-val').value);
+      console.log(document.getElementById('roast_select').value);
 
       fetch(
-        "/beans?" +
+        '/beans?' +
           new URLSearchParams({
-            flavor_prof: document.getElementById("filter-text-val").value,
-            roast_value: document.getElementById("roast_select").value,
-          }).toString(),
+            flavor_prof: document.getElementById('filter-text-val').value,
+            roast_value: document.getElementById('roast_select').value,
+          }).toString()
       )
         .then((response) => response.json())
         .then((data) => {
           if (data.length === 0) {
-            const tempDiv = document.createElement("div");
+            const tempDiv = document.createElement('div');
             tempDiv.innerHTML =
-              "No coffee beans match your query. Please try again :)";
-            tempDiv.style.textAlign = "center";
-            tempDiv.style.marginTop = "5rem";
-            tempDiv.style.fontSize = "18px";
-            tempDiv.style.fontFamily = "Montserrat, sans-serif";
-            document.getElementById("answer-box").appendChild(tempDiv);
+              'No coffee beans match your query. Please try again :)';
+            tempDiv.style.textAlign = 'center';
+            tempDiv.style.marginTop = '5rem';
+            tempDiv.style.fontSize = '18px';
+            tempDiv.style.fontFamily = 'Montserrat, sans-serif';
+            document.getElementById('answer-box').appendChild(tempDiv);
             return;
           }
 
@@ -134,14 +134,14 @@
             let bean = d.bean_info;
             let score = d.score;
             let percentConfidence = `${score.toFixed(2) * 100}%`;
-            let tempDiv = document.createElement("div");
+            let tempDiv = document.createElement('div');
             tempDiv.innerHTML = answerBoxTemplate(
               bean.name,
               percentConfidence,
               bean.review,
-              bean.roast,
+              bean.roast
             );
-            document.getElementById("answer-box").appendChild(tempDiv);
+            document.getElementById('answer-box').appendChild(tempDiv);
           });
         });
     }
