@@ -27,7 +27,12 @@ mysql_engine = MySQLDatabaseHandler(
 # Path to init.sql file. This file can be replaced with your own file for testing on localhost, but do NOT move the init.sql file
 mysql_engine.load_file_into_db()
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder="static/react",
+    template_folder="static/react",
+    static_url_path="",
+)
 CORS(app)
 
 
@@ -88,8 +93,7 @@ def build_inverted_index(review_dict):
         # create a temp dict for count of words in tokenized_dict
         temp_dict = {}
         for token in review:
-            temp_dict[token] = temp_dict.get(
-                token, 0) + 1  # get count of each token
+            temp_dict[token] = temp_dict.get(token, 0) + 1  # get count of each token
 
         # go thru every word in temp_dict
         for word, count in temp_dict.items():
@@ -336,9 +340,7 @@ def index_search(
     return final_results[0:10]
 
 
-def jaccard_search(
-    query, coffee_data, n_jacc, tokenizer=tokenize
-):
+def jaccard_search(query, coffee_data, n_jacc, tokenizer=tokenize):
     """Finds the Jaccard Similarity between bean's categories
 
     Returns
@@ -360,8 +362,8 @@ def jaccard_search(
     results = list()
 
     for bean in coffee_data:
-        coffee_cat = bean["flavor"][1: -1].split(", ")
-        coffee_cat = [cat.replace("'", '') for cat in coffee_cat]
+        coffee_cat = bean["flavor"][1:-1].split(", ")
+        coffee_cat = [cat.replace("'", "") for cat in coffee_cat]
         doc_id = bean["id"]
         if query_categories != [] and coffee_cat != []:
             jacc_score = len(np.intersect1d(query_categories, coffee_cat)) / len(
@@ -423,13 +425,13 @@ def get_top_10_rec(
 
 
 # renders home page
-@ app.route("/")
+@app.route("/")
 def home():
-    return render_template("base.html", title="sample html")
+    return render_template("index.html")
 
 
 # return search recommendations
-@ app.route("/beans")
+@app.route("/beans")
 def beans_search():
     flavor_prof = request.args.get("flavor_prof")
     roast_value = request.args.get("roast_value")
