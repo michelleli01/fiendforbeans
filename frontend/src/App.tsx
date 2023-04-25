@@ -27,7 +27,7 @@ function App() {
 
     console.log(searchParams);
 
-    fetch("http://127.0.0.1:5000/beans?" + searchParams)
+    fetch("/beans?" + searchParams)
       .then((response) => response.json())
       .then((data) => {
         setRecommend(data);
