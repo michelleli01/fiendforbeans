@@ -29,28 +29,26 @@ const images = importAll(
   )
 );
 
-const mockBean = {
-  bean_info: {
-    id: 69,
-    name: 'Ethiopia Guracho',
-    roaster: 'Sey Coffee',
-    dollars_per_ounce: 3,
-    origin: 'Ethiopia',
-    roaster_link: 'https://seycoffee.com',
-    roast: 'Light',
-    review:
-      'Floral-driven, deep-toned. Lavender, dark chocolate, bing cherry, amber, tangerine zest in aroma and cup. Sweetly tart structure with balanced, juicy acidity; plush, satiny mouthfeel. Resonant finish with notes of lavender and dark chocolate. ',
-  },
-  score: 96,
-};
+// const mockBean = {
+//   bean_info: {
+//     id: 69,
+//     name: 'Ethiopia Guracho',
+//     roaster: 'Sey Coffee',
+//     dollars_per_ounce: 3,
+//     origin: 'Ethiopia',
+//     roaster_link: 'https://seycoffee.com',
+//     roast: 'Light',
+//     review:
+//       'Floral-driven, deep-toned. Lavender, dark chocolate, bing cherry, amber, tangerine zest in aroma and cup. Sweetly tart structure with balanced, juicy acidity; plush, satiny mouthfeel. Resonant finish with notes of lavender and dark chocolate. ',
+//   },
+//   score: 96,
+// };
 
-const mockResponse = Array(10).fill(mockBean);
+// const mockResponse = Array(10).fill(mockBean);
 
 const SearchResultsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [recommended, setRecommended] = useState<Bean[] | undefined>(
-    mockResponse
-  );
+  const [recommended, setRecommended] = useState<Bean[] | undefined>(undefined);
   const [query, setQuery] = useState<string>('');
 
   const getRecommendedCoffees = (query: string, roast: string) => {
@@ -79,7 +77,7 @@ const SearchResultsPage = () => {
     <Box style={{ margin: '2%' }}>
       <Box style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Link to='/' style={{ textDecoration: 'none', color: 'brown' }}>
-          <img src={logo} style={{ width: '300px' }} />
+          <img src={logo} style={{ width: '300px' }} alt='fiendforbeans logo' />
         </Link>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <TextField
@@ -119,7 +117,9 @@ const SearchResultsPage = () => {
         }}
       >
         {recommended === undefined ? (
-          <Box>Loading results...</Box>
+          <Box sx={{ marginTop: '300px' }}>
+            <Typography variant='body1'>Loading results...</Typography>
+          </Box>
         ) : (
           recommended.map((coffee) => (
             <Card
@@ -137,7 +137,11 @@ const SearchResultsPage = () => {
                   <CardMedia
                     component='img'
                     sx={{ width: 150 }}
-                    image={images['Baba Java Coffee.webp']}
+                    image={
+                      images[`${coffee.bean_info.roaster}.webp`]
+                        ? images[`${coffee.bean_info.roaster}.webp`]
+                        : undefined
+                    }
                     alt='roaster logo'
                   />
                 </Box>
