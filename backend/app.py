@@ -141,7 +141,7 @@ def query_expander(query_in, data_list):
 
 
 # testing code
-expanded_query = query_expander("citrus", data_list)
+expanded_query = query_expander("floral", data_list)
 print("this is expanded query")
 print(expanded_query)
 
@@ -441,7 +441,7 @@ def jaccard_search(query, coffee_data, n_jacc, tokenizer=tokenize):
 
 review_dict = tokenize_reviews(data_list)
 inv_idx = build_inverted_index(review_dict)
-idf = compute_idf(inv_idx, len(review_dict), min_df=10, max_df_ratio=0.1)
+idf = compute_idf(inv_idx, len(review_dict), min_df=10, max_df_ratio=0.2)
 
 inv_idx = {
     key: val for key, val in inv_idx.items() if key in idf
