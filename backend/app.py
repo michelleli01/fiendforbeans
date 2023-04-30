@@ -20,7 +20,7 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = ""
+MYSQL_USER_PASSWORD = "Aa032819032819"
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
 
@@ -89,60 +89,61 @@ def tokenize_reviews(coffee_data):
     return review_dict
 
 
-##SVD Code Referenced from Code Demo Lecture 4/13
+# SVD Code Referenced from Code Demo Lecture 4/13
 # print(data_list)
 # Find 3 closest words to a given word in a vocab dict of all the words in svd rep
 def closest_words(word_in, word_to_index, index_to_word, words_representation_in, k=3):
-    print(word_in)
+    # print(word_in)
     if word_in in word_to_index:
-        print("yes")
+        # print('yes')
         sims = words_representation_in.dot(
-            words_representation_in[word_to_index[word_in], :]
-        )
-        asort = np.argsort(-sims)[: k + 1]
+            words_representation_in[word_to_index[word_in], :])
+        asort = np.argsort(-sims)[:k+1]
     else:
-        print("no")
+        # print('no')
         asort = list()  # empty list
-    print(asort)
+    # print(asort)
     return [index_to_word[i] for i in asort[1:]]
-
-
 # Return list of expanded query given input query
+
+
 def query_expander(query_in, data_list):
+    original_query = query_in.lower()
+    original_query = tokenize(query_in)
+
     vectorizer = TfidfVectorizer()
     td_matrix = vectorizer.fit_transform(
-        [x["review"] for x in data_list]
-    )  # 6 being review
+        [x['review'] for x in data_list])  # 6 being review
     expanded_query = list()
 
     d_compressed, s, words_compressed = svds(td_matrix, k=40)
     # words_compressed = v, d_compressed = d
     words_compressed = words_compressed.transpose()
     # setup for closest words helper
-    word_to_index = (
-        vectorizer.vocabulary_
-    )  # NB: a lot of these words end in "y" so maybe stemming
+    # NB: a lot of these words end in "y" so maybe stemming
+    word_to_index = vectorizer.vocabulary_
     # print(word_to_index)
     index_to_word = {i: t for t, i in word_to_index.items()}
     words_compressed_normed = normalize(words_compressed, axis=1)
     word_list = tokenize(query_in)
 
     for word in word_list:
+
         closest_three_words = closest_words(
-            word, word_to_index, index_to_word, words_compressed_normed
-        )
+            word, word_to_index, index_to_word, words_compressed_normed)
         expanded_query.extend(closest_three_words)
     # # cosine similarity
 
     # td_matrix_np = td_matrix.transpose().toarray()
     # td_matrix_np = normalize(td_matrix_np)
 
-    return expanded_query
+    return (expanded_query + original_query)
 
 
 # testing code
-# expanded_query = query_expander("citrus floral berry", data_list)
-# print(expanded_query)
+expanded_query = query_expander("floral", data_list)
+print("this is expanded query")
+print(expanded_query)
 
 
 def build_inverted_index(review_dict):
@@ -152,7 +153,8 @@ def build_inverted_index(review_dict):
         # create a temp dict for count of words in tokenized_dict
         temp_dict = {}
         for token in review:
-            temp_dict[token] = temp_dict.get(token, 0) + 1  # get count of each token
+            temp_dict[token] = temp_dict.get(
+                token, 0) + 1  # get count of each token
 
         # go thru every word in temp_dict
         for word, count in temp_dict.items():
@@ -348,6 +350,7 @@ for key, value in flavor_cat.items():
 # cosine search
 def index_search(
     query,
+    coffee_data,
     roast_value,
     index,
     idf,
@@ -364,7 +367,8 @@ def index_search(
         with the highest score.
     """
     query = query.lower()
-    query_tokens = tokenize(query)
+    # query_tokens = tokenize(query)
+    query_tokens = query_expander(query, coffee_data)
     query_word_counts = dict()
 
     for word in query_tokens:
@@ -372,7 +376,7 @@ def index_search(
     results = list()
     doc_scores = score_func(query_word_counts, index, idf)
 
-    print(doc_scores)
+    # print(doc_scores)
     # q_norms
     q_norm = 0
     for term, freq in query_word_counts.items():
@@ -392,10 +396,10 @@ def index_search(
         results, data_list, roast_value
     )  # top roast results (may not be anything)
 
-    print(roast_results)
+    # print(roast_results)
     difference = set(results) - set(roast_results)
     final_results = roast_results + list(difference)
-    print(final_results)
+    # print(final_results)
     return final_results[0:10]
 
 
@@ -416,7 +420,7 @@ def jaccard_search(query, coffee_data, n_jacc, tokenizer=tokenize):
     for qt in query_tokens:
         if rev_flavor_cat[qt] != None:
             query_categories.append(rev_flavor_cat[qt])
-    print(query_categories)
+    # print(query_categories)
 
     results = list()
 
@@ -429,7 +433,7 @@ def jaccard_search(query, coffee_data, n_jacc, tokenizer=tokenize):
                 np.union1d(query_categories, coffee_cat)
             )
             results.append((jacc_score, doc_id))
-            print(jacc_score)
+            # print(jacc_score)
 
     results = sorted(results, key=lambda x: x[0], reverse=True)
     return results[0:n_jacc]
@@ -437,7 +441,7 @@ def jaccard_search(query, coffee_data, n_jacc, tokenizer=tokenize):
 
 review_dict = tokenize_reviews(data_list)
 inv_idx = build_inverted_index(review_dict)
-idf = compute_idf(inv_idx, len(review_dict), min_df=10, max_df_ratio=0.1)
+idf = compute_idf(inv_idx, len(review_dict), min_df=10, max_df_ratio=0.2)
 
 inv_idx = {
     key: val for key, val in inv_idx.items() if key in idf
@@ -445,11 +449,11 @@ inv_idx = {
 bean_doc_norms = compute_doc_norms(inv_idx, idf, len(review_dict))
 
 
-# directly serch for roast values
+# directly search for roast values
 def filter_search(roast):
     query_sql = f"""SELECT * from reviews WHERE roast =={roast}"""
     data = mysql_engine.query_selector(query_sql)
-    print(data)
+    # print(data)
     return list(data)
 
 
@@ -462,7 +466,7 @@ def get_top_10_rec(
     tokenize=tokenize,
 ):
     output = index_search(
-        query, roast_value, inv_idx, idf, bean_doc_norms, tokenize
+        query, data_list, roast_value, inv_idx, idf, bean_doc_norms, tokenize
     )  # score, doc id
     rec_beans = (
         list()
@@ -470,8 +474,11 @@ def get_top_10_rec(
     for score, bean_id in output:
         bean_info = data_list[bean_id]
         rec_beans.append({"bean_info": bean_info, "score": score})
+        print("printing score")
+        print(score)
 
     if len(rec_beans) != 10:
+        print("entering jacc")
         jacc_results = jaccard_search(query, data_list, 10 - len(rec_beans))
         for jr in jacc_results:
             bean_info = data_list[jr[1]]
