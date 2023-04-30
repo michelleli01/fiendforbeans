@@ -21,7 +21,7 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "MayankRao16Cornell.edu"
+MYSQL_USER_PASSWORD = ""
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
 
@@ -64,7 +64,6 @@ data_list = json.loads(data)  # convert to list of dicts
 
 # Cosine Sim Algorithm
 
-
 def tokenize(text):
     """Returns a list of words that make up the text.
     Params: {text: String}
@@ -95,15 +94,15 @@ def tokenize_reviews(coffee_data):
 #print(data_list)
 #Find 3 closest words to a given word in a vocab dict of all the words in svd rep
 def closest_words(word_in, word_to_index, index_to_word, words_representation_in, k = 3):
-    print(word_in)
+    # print(word_in)
     if word_in in word_to_index: 
-        print('yes')
+        # print('yes')
         sims = words_representation_in.dot(words_representation_in[word_to_index[word_in],:])
         asort = np.argsort(-sims)[:k+1]
     else: 
-        print('no')
+        # print('no')
         asort = list() #empty list 
-    print(asort)
+    # print(asort)
     return [index_to_word[i] for i in asort[1:]]
 #Return list of expanded query given input query
 def query_expander(query_in, data_list):
@@ -132,9 +131,10 @@ def query_expander(query_in, data_list):
     # td_matrix_np = normalize(td_matrix_np)
 
     return expanded_query
-#testing code
-#expanded_query = query_expander("citrus floral berry", data_list)
-#print(expanded_query)
+# testing code
+expanded_query = query_expander("citrus floral berry", data_list)
+print("this is expanded query")
+print(expanded_query)
 
 
 def build_inverted_index(review_dict):
@@ -340,6 +340,7 @@ for key, value in flavor_cat.items():
 # cosine search
 def index_search(
     query,
+    coffee_data,
     roast_value,
     index,
     idf,
@@ -356,7 +357,8 @@ def index_search(
         with the highest score.
     """
     query = query.lower()
-    query_tokens = tokenize(query)
+    # query_tokens = tokenize(query)
+    query_tokens = query_expander(query, coffee_data)
     query_word_counts = dict()
 
     for word in query_tokens:
@@ -364,7 +366,7 @@ def index_search(
     results = list()
     doc_scores = score_func(query_word_counts, index, idf)
 
-    print(doc_scores)
+    # print(doc_scores)
     # q_norms
     q_norm = 0
     for term, freq in query_word_counts.items():
@@ -384,10 +386,10 @@ def index_search(
         results, data_list, roast_value
     )  # top roast results (may not be anything)
 
-    print(roast_results)
+    # print(roast_results)
     difference = set(results) - set(roast_results)
     final_results = roast_results + list(difference)
-    print(final_results)
+    # print(final_results)
     return final_results[0:10]
 
 
@@ -408,7 +410,7 @@ def jaccard_search(query, coffee_data, n_jacc, tokenizer=tokenize):
     for qt in query_tokens:
         if rev_flavor_cat[qt] != None:
             query_categories.append(rev_flavor_cat[qt])
-    print(query_categories)
+    # print(query_categories)
 
     results = list()
 
@@ -421,7 +423,7 @@ def jaccard_search(query, coffee_data, n_jacc, tokenizer=tokenize):
                 np.union1d(query_categories, coffee_cat)
             )
             results.append((jacc_score, doc_id))
-            print(jacc_score)
+            # print(jacc_score)
 
     results = sorted(results, key=lambda x: x[0], reverse=True)
     return results[0:n_jacc]
@@ -437,11 +439,11 @@ inv_idx = {
 bean_doc_norms = compute_doc_norms(inv_idx, idf, len(review_dict))
 
 
-# directly serch for roast values
+# directly search for roast values
 def filter_search(roast):
     query_sql = f"""SELECT * from reviews WHERE roast =={roast}"""
     data = mysql_engine.query_selector(query_sql)
-    print(data)
+    # print(data)
     return list(data)
 
 
@@ -454,7 +456,7 @@ def get_top_10_rec(
     tokenize=tokenize,
 ):
     output = index_search(
-        query, roast_value, inv_idx, idf, bean_doc_norms, tokenize
+        query, data_list, roast_value, inv_idx, idf, bean_doc_norms, tokenize
     )  # score, doc id
     rec_beans = (
         list()
