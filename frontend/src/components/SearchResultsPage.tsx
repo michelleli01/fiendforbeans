@@ -136,18 +136,26 @@ const SearchResultsPage = () => {
                 style={{ display: 'flex', alignItems: 'center', margin: '1%' }}
               >
                 <Box>
-                  <a href={coffee.bean_info.roaster_link}>
-                    <CardMedia
-                      component='img'
-                      sx={{ width: 150 }}
-                      image={
-                        images[`${coffee.bean_info.roaster}.webp`]
-                          ? images[`${coffee.bean_info.roaster}.webp`]
-                          : undefined
-                      }
-                      alt='roaster logo'
-                    />
-                  </a>
+                  {images[`${coffee.bean_info.roaster}.webp`] ? (
+                    <a href={coffee.bean_info.roaster_link}>
+                      <CardMedia
+                        component='img'
+                        sx={{ width: 150 }}
+                        image={
+                          images[`${coffee.bean_info.roaster}.webp`]
+                            ? images[`${coffee.bean_info.roaster}.webp`]
+                            : undefined
+                        }
+                        alt='roaster logo'
+                      />
+                    </a>
+                  ) : (
+                    <Box
+                      sx={{ fontFamily: 'Comic Sans MS', textAlign: 'center' }}
+                    >
+                      Roaster logo not available :(
+                    </Box>
+                  )}
                 </Box>
 
                 <CardContent sx={{ width: '100%' }}>
