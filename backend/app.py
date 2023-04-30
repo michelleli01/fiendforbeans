@@ -12,7 +12,6 @@ from scipy.sparse.linalg import svds
 from sklearn.preprocessing import normalize
 
 
-
 # ROOT_PATH for linking with all your files.
 # Feel free to use a config.py or settings.py with a global export variable
 os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
@@ -21,7 +20,7 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "MayankRao16Cornell.edu"
+MYSQL_USER_PASSWORD = ""
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
 
@@ -90,41 +89,48 @@ def tokenize_reviews(coffee_data):
     return review_dict
 
 
-
 ##SVD Code Referenced from Code Demo Lecture 4/13
-#print(data_list)
-#Find 3 closest words to a given word in a vocab dict of all the words in svd rep
-def closest_words(word_in, word_to_index, index_to_word, words_representation_in, k = 3):
+# print(data_list)
+# Find 3 closest words to a given word in a vocab dict of all the words in svd rep
+def closest_words(word_in, word_to_index, index_to_word, words_representation_in, k=3):
     print(word_in)
-    if word_in in word_to_index: 
-        print('yes')
-        sims = words_representation_in.dot(words_representation_in[word_to_index[word_in],:])
-        asort = np.argsort(-sims)[:k+1]
-    else: 
-        print('no')
-        asort = list() #empty list 
+    if word_in in word_to_index:
+        print("yes")
+        sims = words_representation_in.dot(
+            words_representation_in[word_to_index[word_in], :]
+        )
+        asort = np.argsort(-sims)[: k + 1]
+    else:
+        print("no")
+        asort = list()  # empty list
     print(asort)
     return [index_to_word[i] for i in asort[1:]]
-#Return list of expanded query given input query
+
+
+# Return list of expanded query given input query
 def query_expander(query_in, data_list):
     vectorizer = TfidfVectorizer()
-    td_matrix = vectorizer.fit_transform([x['review'] for x in data_list]) #6 being review
-    expanded_query = list() 
-    
+    td_matrix = vectorizer.fit_transform(
+        [x["review"] for x in data_list]
+    )  # 6 being review
+    expanded_query = list()
 
-    d_compressed,s,words_compressed = svds(td_matrix, k=40)
-    #words_compressed = v, d_compressed = d 
+    d_compressed, s, words_compressed = svds(td_matrix, k=40)
+    # words_compressed = v, d_compressed = d
     words_compressed = words_compressed.transpose()
-    #setup for closest words helper 
-    word_to_index = vectorizer.vocabulary_ #NB: a lot of these words end in "y" so maybe stemming
-    #print(word_to_index)
-    index_to_word = {i:t for t,i in word_to_index.items()}
-    words_compressed_normed = normalize(words_compressed, axis = 1)
+    # setup for closest words helper
+    word_to_index = (
+        vectorizer.vocabulary_
+    )  # NB: a lot of these words end in "y" so maybe stemming
+    # print(word_to_index)
+    index_to_word = {i: t for t, i in word_to_index.items()}
+    words_compressed_normed = normalize(words_compressed, axis=1)
     word_list = tokenize(query_in)
 
-    for word in word_list: 
-        
-        closest_three_words = closest_words(word, word_to_index, index_to_word, words_compressed_normed)
+    for word in word_list:
+        closest_three_words = closest_words(
+            word, word_to_index, index_to_word, words_compressed_normed
+        )
         expanded_query.extend(closest_three_words)
     # # cosine similarity
 
@@ -132,9 +138,11 @@ def query_expander(query_in, data_list):
     # td_matrix_np = normalize(td_matrix_np)
 
     return expanded_query
-#testing code
-#expanded_query = query_expander("citrus floral berry", data_list)
-#print(expanded_query)
+
+
+# testing code
+# expanded_query = query_expander("citrus floral berry", data_list)
+# print(expanded_query)
 
 
 def build_inverted_index(review_dict):
@@ -481,6 +489,11 @@ def home():
     return render_template("index.html")
 
 
+@app.route("/search")
+def search():
+    return render_template("index.html")
+
+
 # return search recommendations
 @app.route("/beans")
 def beans_search():
@@ -490,4 +503,4 @@ def beans_search():
     return get_top_10_rec(flavor_prof, roast_value)
 
 
-# app.run(debug=True)
+app.run(debug=True)
