@@ -12,7 +12,6 @@ from scipy.sparse.linalg import svds
 from sklearn.preprocessing import normalize
 
 
-
 # ROOT_PATH for linking with all your files.
 # Feel free to use a config.py or settings.py with a global export variable
 os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
@@ -64,6 +63,7 @@ data_list = json.loads(data)  # convert to list of dicts
 
 # Cosine Sim Algorithm
 
+
 def tokenize(text):
     """Returns a list of words that make up the text.
     Params: {text: String}
@@ -89,50 +89,59 @@ def tokenize_reviews(coffee_data):
     return review_dict
 
 
-
-##SVD Code Referenced from Code Demo Lecture 4/13
-#print(data_list)
-#Find 3 closest words to a given word in a vocab dict of all the words in svd rep
-def closest_words(word_in, word_to_index, index_to_word, words_representation_in, k = 3):
+# SVD Code Referenced from Code Demo Lecture 4/13
+# print(data_list)
+# Find 3 closest words to a given word in a vocab dict of all the words in svd rep
+def closest_words(word_in, word_to_index, index_to_word, words_representation_in, k=3):
     # print(word_in)
-    if word_in in word_to_index: 
+    if word_in in word_to_index:
         # print('yes')
-        sims = words_representation_in.dot(words_representation_in[word_to_index[word_in],:])
+        sims = words_representation_in.dot(
+            words_representation_in[word_to_index[word_in], :])
         asort = np.argsort(-sims)[:k+1]
-    else: 
+    else:
         # print('no')
-        asort = list() #empty list 
+        asort = list()  # empty list
     # print(asort)
     return [index_to_word[i] for i in asort[1:]]
-#Return list of expanded query given input query
-def query_expander(query_in, data_list):
-    vectorizer = TfidfVectorizer()
-    td_matrix = vectorizer.fit_transform([x['review'] for x in data_list]) #6 being review
-    expanded_query = list() 
-    
+# Return list of expanded query given input query
 
-    d_compressed,s,words_compressed = svds(td_matrix, k=40)
-    #words_compressed = v, d_compressed = d 
+
+def query_expander(query_in, data_list):
+    original_query = query_in.lower()
+    original_query = tokenize(query_in)
+
+    vectorizer = TfidfVectorizer()
+    td_matrix = vectorizer.fit_transform(
+        [x['review'] for x in data_list])  # 6 being review
+    expanded_query = list()
+
+    d_compressed, s, words_compressed = svds(td_matrix, k=40)
+    # words_compressed = v, d_compressed = d
     words_compressed = words_compressed.transpose()
-    #setup for closest words helper 
-    word_to_index = vectorizer.vocabulary_ #NB: a lot of these words end in "y" so maybe stemming
-    #print(word_to_index)
-    index_to_word = {i:t for t,i in word_to_index.items()}
-    words_compressed_normed = normalize(words_compressed, axis = 1)
+    # setup for closest words helper
+    # NB: a lot of these words end in "y" so maybe stemming
+    word_to_index = vectorizer.vocabulary_
+    # print(word_to_index)
+    index_to_word = {i: t for t, i in word_to_index.items()}
+    words_compressed_normed = normalize(words_compressed, axis=1)
     word_list = tokenize(query_in)
 
-    for word in word_list: 
-        
-        closest_three_words = closest_words(word, word_to_index, index_to_word, words_compressed_normed)
+    for word in word_list:
+
+        closest_three_words = closest_words(
+            word, word_to_index, index_to_word, words_compressed_normed)
         expanded_query.extend(closest_three_words)
     # # cosine similarity
 
     # td_matrix_np = td_matrix.transpose().toarray()
     # td_matrix_np = normalize(td_matrix_np)
 
-    return expanded_query
+    return (expanded_query + original_query)
+
+
 # testing code
-expanded_query = query_expander("citrus floral berry", data_list)
+expanded_query = query_expander("citrus", data_list)
 print("this is expanded query")
 print(expanded_query)
 
@@ -144,7 +153,8 @@ def build_inverted_index(review_dict):
         # create a temp dict for count of words in tokenized_dict
         temp_dict = {}
         for token in review:
-            temp_dict[token] = temp_dict.get(token, 0) + 1  # get count of each token
+            temp_dict[token] = temp_dict.get(
+                token, 0) + 1  # get count of each token
 
         # go thru every word in temp_dict
         for word, count in temp_dict.items():
@@ -464,8 +474,11 @@ def get_top_10_rec(
     for score, bean_id in output:
         bean_info = data_list[bean_id]
         rec_beans.append({"bean_info": bean_info, "score": score})
+        print("printing score")
+        print(score)
 
     if len(rec_beans) != 10:
+        print("entering jacc")
         jacc_results = jaccard_search(query, data_list, 10 - len(rec_beans))
         for jr in jacc_results:
             bean_info = data_list[jr[1]]
