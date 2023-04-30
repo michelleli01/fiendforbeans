@@ -1,4 +1,4 @@
-type Bean = {
+export type Bean = {
   bean_info: {
     id: number;
     name: string;
@@ -12,4 +12,9 @@ type Bean = {
   score: number;
 };
 
-export default Bean;
+export type Roast =
+  | 'Light'
+  | 'Medium-Light'
+  | 'Medium'
+  | 'Medium-Dark'
+  | 'Dark';

@@ -1,6 +1,6 @@
-import React from "react";
-import Bean from "../types";
-import AnswerBox from "./AnswerBox";
+import React from 'react';
+import { Bean } from '../types';
+import AnswerBox from './AnswerBox';
 
 type RecommendationsProps = { recommend: Bean[] | undefined };
 
