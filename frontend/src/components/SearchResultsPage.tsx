@@ -73,6 +73,8 @@ const SearchResultsPage = () => {
     if (query && roast) getRecommendedCoffees(query, roast);
   }, [searchParams]);
 
+  recommended?.forEach((coffee) => console.log(coffee.score));
+
   return (
     <Box style={{ margin: '2%' }}>
       <Box style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -161,7 +163,7 @@ const SearchResultsPage = () => {
                 <Typography variant='subtitle1'>Score:</Typography>
                 <LinearProgressWithLabel
                   variant='determinate'
-                  value={coffee.score}
+                  value={coffee.score * 100}
                 />
                 <Typography variant='body2'>
                   Roast: {coffee.bean_info.roast} | Price: $
