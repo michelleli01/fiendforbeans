@@ -443,7 +443,6 @@ def search():
 def beans_search():
     flavor_prof = request.args.get("flavor_prof")
     roast_value = request.args.get("roast_value")
-    expanded_query = query_expander(flavor_prof, data_list)
     return get_top_10_rec(flavor_prof, roast_value)
 
 
