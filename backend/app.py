@@ -167,7 +167,7 @@ def compute_idf(inv_idx, n_docs, min_df=10, max_df_ratio=0.95):
     max_thresh = max_df_ratio * n_docs
     for term, docs in inv_idx.items():
         len_docs = len(docs)
-        if len_docs <= max_thresh and len_docs >= 10:
+        if len_docs <= max_thresh and len_docs >= min_df:
             pre_log_idf = n_docs / (1 + len_docs)
             idf = math.log2(pre_log_idf)
             idf_vals[term] = idf
@@ -384,7 +384,7 @@ def index_search(
 
 review_dict = tokenize_reviews(data_list)
 inv_idx = build_inverted_index(review_dict)
-idf = compute_idf(inv_idx, len(review_dict), min_df=10, max_df_ratio=0.2)
+idf = compute_idf(inv_idx, len(review_dict), min_df=3, max_df_ratio=0.2)
 
 inv_idx = {
     key: val for key, val in inv_idx.items() if key in idf
