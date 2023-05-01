@@ -50,6 +50,9 @@ const SearchResultsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [recommended, setRecommended] = useState<Bean[] | undefined>(undefined);
   const [query, setQuery] = useState<string>('');
+  const [expandedQuery, setExpandedQuery] = useState<string[] | undefined>(
+    undefined
+  );
 
   const getRecommendedCoffees = (query: string, roast: string) => {
     const searchParams = new URLSearchParams({
@@ -62,7 +65,8 @@ const SearchResultsPage = () => {
     fetch('/beans?' + searchParams)
       .then((response) => response.json())
       .then((data) => {
-        setRecommended(data);
+        setRecommended(data.beans);
+        setExpandedQuery(data.expandedQuery);
         console.log(data);
       });
   };
@@ -163,7 +167,10 @@ const SearchResultsPage = () => {
                     {coffee.bean_info.name} - {coffee.bean_info.roaster}
                   </Typography>
                   <Typography variant='body1' color='text.secondary'>
-                    {coffee.bean_info.review}
+                    <ReviewDisplay
+                      review={coffee.bean_info.review}
+                      expandedQuery={expandedQuery}
+                    />
                   </Typography>
                 </CardContent>
               </Box>
@@ -203,5 +210,28 @@ function LinearProgressWithLabel(
     </Box>
   );
 }
+
+const ReviewDisplay = ({
+  review,
+  expandedQuery,
+}: {
+  review: string;
+  expandedQuery: string[] | undefined;
+}) => {
+  console.log(expandedQuery);
+  return (
+    <Box>
+      {review.split(' ').map((word) => (
+        <span
+          style={{
+            fontWeight: expandedQuery?.some((term) => word.includes(term))
+              ? 'bold'
+              : 'normal',
+          }}
+        >{` ${word}`}</span>
+      ))}
+    </Box>
+  );
+};
 
 export default SearchResultsPage;

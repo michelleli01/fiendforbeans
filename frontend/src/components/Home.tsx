@@ -65,7 +65,11 @@ const HomePage = () => {
         variant='contained'
         onClick={() => {
           if (search.length !== 0) {
-            navigate(`/search?q=${search}&roast=${roast}`);
+            const params = new URLSearchParams({
+              q: search,
+              roast,
+            }).toString();
+            navigate(`/search?${params}`);
           }
         }}
       >
