@@ -227,7 +227,9 @@ const ReviewDisplay = ({
       {review.split(' ').map((word) => (
         <span
           style={{
-            fontWeight: expandedQuery?.some((term) => word.includes(term))
+            fontWeight: expandedQuery?.some((term) =>
+              word.toLowerCase().includes(term)
+            )
               ? 'bold'
               : 'normal',
           }}
