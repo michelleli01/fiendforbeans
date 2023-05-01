@@ -67,9 +67,9 @@ data_list = json.loads(data)  # convert to list of dicts
 
 def matrix_preprocessing(text):
     stemmer=PorterStemmer()
-    text=text.lower() 
-    text=re.sub("\\W"," ",text) 
-    text=re.sub("\\s+(in|the|all|for|and|on)\\s+"," _connector_ ",text)     
+    text=text.lower()
+    text=re.sub("\\W"," ",text)
+    text=re.sub("\\s+(in|the|all|for|and|on)\\s+"," _connector_ ",text)
     # stem words
     words=re.split("\\s+",text)
     stemmed_words=[stemmer.stem(word=word) for word in words]
@@ -398,13 +398,13 @@ def index_search(
         cossim_val = doc_score / (doc_norms[doc_id] * q_norm)
         results.append((cossim_val, doc_id))
 
-    results = sorted(results, key=lambda x: x[0], reverse=True)
     roast_results = roast_search(
         results, data_list, roast_value
     )  # top roast results (may not be anything)
 
     difference = set(results) - set(roast_results)
     final_results = roast_results + list(difference)
+    final_results = sorted(final_results, key=lambda x:x[0], reverse=True)
     return final_results[0:10]
 
 review_dict = tokenize_reviews(data_list)
@@ -469,4 +469,4 @@ def beans_search():
     return get_top_10_rec(expanded_query, roast_value)
 
 
-app.run(debug=True)
+# app.run(debug=True)
