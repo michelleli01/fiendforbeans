@@ -127,6 +127,12 @@ const SearchResultsPage = () => {
           <Box sx={{ marginTop: '300px' }}>
             <Typography variant='body1'>Loading results...</Typography>
           </Box>
+        ) : recommended.length === 0 ? (
+          <Box sx={{ marginTop: '300px' }}>
+            <Typography variant='body1'>
+              No results match your query :(
+            </Typography>
+          </Box>
         ) : (
           recommended.map((coffee) => (
             <Card
