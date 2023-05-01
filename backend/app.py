@@ -4,6 +4,7 @@ import re
 import numpy as np
 import math
 from nltk.tokenize import TreebankWordTokenizer
+from nltk.stem import PorterStemmer
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
@@ -62,7 +63,24 @@ data = load_data()  # string of dictionaries
 data_list = json.loads(data)  # convert to list of dicts
 
 # Cosine Sim Algorithm
+#preprocessing
 
+def matrix_preprocessing(text):
+    stemmer=PorterStemmer()
+    text=text.lower() 
+    text=re.sub("\\W"," ",text) 
+    text=re.sub("\\s+(in|the|all|for|and|on)\\s+"," _connector_ ",text)     
+    # stem words
+    words=re.split("\\s+",text)
+    stemmed_words=[stemmer.stem(word=word) for word in words]
+    return ' '.join(stemmed_words)
+
+def stemming(text):
+    stemmer=PorterStemmer()
+
+    stem = stemmer.stem(text)
+    #     print(review_tokens_distinct[i], stem)
+    return stem
 
 def tokenize(text):
     """Returns a list of words that make up the text.
@@ -82,6 +100,10 @@ def tokenize_reviews(coffee_data):
         name = bean["name"]
         review = bean["review"]
         t_review = tokenize(review)
+        for i in range(len(t_review)):
+            stemmed = stemming(t_review[i])
+            t_review[i] = stemmed
+
         if name in review_dict:
             review_dict[name] += t_review
         else:
@@ -104,8 +126,11 @@ def closest_words(word_in, word_to_index, index_to_word, words_representation_in
 def query_expander(query_in, data_list):
     original_query = query_in.lower()
     original_query = tokenize(query_in)
+    for i in range(len(original_query)):
+        stemmed = stemming(original_query[i])
+        original_query[i] = stemmed
 
-    vectorizer = TfidfVectorizer()
+    vectorizer = TfidfVectorizer(preprocessor=matrix_preprocessing)
     td_matrix = vectorizer.fit_transform(
         [x['review'] for x in data_list])  # 6 being review
     expanded_query = list()
