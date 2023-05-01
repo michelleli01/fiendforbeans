@@ -20,7 +20,7 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "MayankRao16Cornell.edu"
+MYSQL_USER_PASSWORD = ""
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
 
@@ -60,7 +60,6 @@ def load_data():
 
 data = load_data()  # string of dictionaries
 data_list = json.loads(data)  # convert to list of dicts
-
 # Cosine Sim Algorithm
 
 
@@ -78,14 +77,14 @@ def tokenize_reviews(coffee_data):
     """
     tokens = set()
     review_dict = dict()
-    for bean in coffee_data:
+    for idx, bean in enumerate(coffee_data):
         name = bean["name"]
         review = bean["review"]
         t_review = tokenize(review)
-        if name in review_dict:
-            review_dict[name] += t_review
+        if idx in review_dict:
+            review_dict[idx] += t_review
         else:
-            review_dict[name] = t_review
+            review_dict[idx] = t_review
     return review_dict
 
 
@@ -94,11 +93,13 @@ def tokenize_reviews(coffee_data):
 def closest_words(word_in, word_to_index, index_to_word, words_representation_in, k=3):
     if word_in in word_to_index:
         sims = words_representation_in.dot(
-            words_representation_in[word_to_index[word_in], :])
-        asort = np.argsort(-sims)[:k+1]
+            words_representation_in[word_to_index[word_in], :]
+        )
+        asort = np.argsort(-sims)[: k + 1]
     else:
         asort = list()  # empty list
     return [index_to_word[i] for i in asort[1:]]
+
 
 # Return list of expanded query given input query
 def query_expander(query_in, data_list):
@@ -107,7 +108,8 @@ def query_expander(query_in, data_list):
 
     vectorizer = TfidfVectorizer()
     td_matrix = vectorizer.fit_transform(
-        [x['review'] for x in data_list])  # 6 being review
+        [x["review"] for x in data_list]
+    )  # 6 being review
     expanded_query = list()
 
     d_compressed, s, words_compressed = svds(td_matrix, k=40)
@@ -121,39 +123,38 @@ def query_expander(query_in, data_list):
     word_list = tokenize(query_in)
 
     for word in word_list:
-
         closest_three_words = closest_words(
-            word, word_to_index, index_to_word, words_compressed_normed)
+            word, word_to_index, index_to_word, words_compressed_normed
+        )
         expanded_query.extend(closest_three_words)
     # # cosine similarity
 
     # td_matrix_np = td_matrix.transpose().toarray()
     # td_matrix_np = normalize(td_matrix_np)
 
-    return (expanded_query + original_query)
+    return expanded_query + original_query
 
 
 def build_inverted_index(review_dict):
     inverted_index = dict()  # dictionary with word: list of tuples
-    doc_id = 0
-    for bean, review in review_dict.items():  # go thru each dict
+    # doc_id = 0
+    for bean_id, review in review_dict.items():  # go thru each dict
         # create a temp dict for count of words in tokenized_dict
         temp_dict = {}
         for token in review:
-            temp_dict[token] = temp_dict.get(
-                token, 0) + 1  # get count of each token
+            temp_dict[token] = temp_dict.get(token, 0) + 1  # get count of each token
 
         # go thru every word in temp_dict
         for word, count in temp_dict.items():
             if word in inverted_index:
-                inverted_index[word].append((doc_id, count))
+                inverted_index[word].append((bean_id, count))
             else:
                 inverted_index[
                     word
                 ] = list()  # initialize as list first idk if necessary
-                inverted_index[word].append((doc_id, count))
+                inverted_index[word].append((bean_id, count))
         # move onto next doc
-        doc_id += 1
+        # doc_id += 1
 
         # now add counts to overall dictionary
 
@@ -182,13 +183,10 @@ def compute_doc_norms(index, idf, n_docs):
 
     norms = np.zeros(n_docs)
     for word in index:
+        idf_weight = 0
         if word in idf:
             idf_weight = idf[word]
-        else:
-            idf_weight = 0  # prune to 0
-        for doc in index[word]:
-            tf_weight = doc[1]
-            doc_id = doc[0]
+        for doc_id, tf_weight in index[word]:
             norms[doc_id] += (tf_weight * idf_weight) ** 2
     norms = np.sqrt(norms)
     # go thru all possible docs, find the word and its invertex index,
@@ -209,14 +207,11 @@ def accumulate_dot_scores(query_word_counts, index, idf):
     for word, qf in query_word_counts.items():
         if word in index:
             documents = index[word]
-            for doc in documents:
-                doc_id, tf = doc[0], doc[1]
-
+            for doc_id, tf in documents:
                 if word not in idf:
                     idf_val = 0
                 else:
                     idf_val = idf[word]
-
                 acc = idf_val * qf * tf * idf_val
                 if doc_id not in doc_scores:
                     doc_scores[doc_id] = acc
@@ -362,10 +357,9 @@ def index_search(
     # q_norms
     q_norm = 0
     for term, freq in query_word_counts.items():
+        idf_weight = 0
         if term in idf:
             idf_weight = idf[term]
-        else:
-            idf_weight = 0  # prune to 0
         q_norm += (freq * idf_weight) ** 2
     q_norm = math.sqrt(q_norm)
 
@@ -374,13 +368,15 @@ def index_search(
         results.append((cossim_val, doc_id))
 
     results = sorted(results, key=lambda x: x[0], reverse=True)
-    roast_results = roast_search(
-        results, data_list, roast_value
-    )  # top roast results (may not be anything)
+    # roast_results = roast_search(
+    #     results, data_list, roast_value
+    # )  # top roast results (may not be anything)
 
-    difference = set(results) - set(roast_results)
-    final_results = roast_results + list(difference)
-    return final_results[0:10]
+    # difference = set(results) - set(roast_results)
+    # final_results = roast_results + list(difference)
+    # return final_results[0:10]
+    return results[0:10]
+
 
 review_dict = tokenize_reviews(data_list)
 inv_idx = build_inverted_index(review_dict)
