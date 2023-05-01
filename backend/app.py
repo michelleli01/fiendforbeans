@@ -1,10 +1,21 @@
+import nltk
+import ssl
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+
+nltk.download("wordnet")
+
 import json
 import os
 import re
 import numpy as np
 import math
-from nltk.tokenize import TreebankWordTokenizer
-from nltk.stem import PorterStemmer
+from nltk.stem.wordnet import WordNetLemmatizer
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
@@ -66,22 +77,19 @@ data_list = json.loads(data)  # convert to list of dicts
 
 
 def matrix_preprocessing(text):
-    stemmer = PorterStemmer()
+    stemmer = WordNetLemmatizer()
     text = text.lower()
     text = re.sub("\\W", " ", text)
     text = re.sub("\\s+(in|the|all|for|and|on)\\s+", " _connector_ ", text)
     # stem words
     words = re.split("\\s+", text)
-    stemmed_words = [stemmer.stem(word=word) for word in words]
+    stemmed_words = [stemmer.lemmatize(word) for word in words]
     return " ".join(stemmed_words)
 
 
 def stemming(text):
-    stemmer = PorterStemmer()
-
-    stem = stemmer.stem(text)
-    #     print(review_tokens_distinct[i], stem)
-    return stem
+    lemma = WordNetLemmatizer()
+    return lemma.lemmatize(text)
 
 
 def tokenize(text):
@@ -101,6 +109,8 @@ def tokenize_reviews(coffee_data):
     for idx, bean in enumerate(coffee_data):
         review = bean["review"]
         t_review = tokenize(review)
+        for i in range(len(t_review)):
+            t_review[i] = stemming(t_review[i])
         if idx in review_dict:
             review_dict[idx] += t_review
         else:
@@ -121,31 +131,31 @@ def closest_words(word_in, word_to_index, index_to_word, words_representation_in
     return [index_to_word[i] for i in asort[1:]]
 
 
+vectorizer = TfidfVectorizer(preprocessor=matrix_preprocessing, max_df=0.2, min_df=3)
+td_matrix = vectorizer.fit_transform([x["review"] for x in data_list])  # 6 being review
+d_compressed, s, words_compressed = svds(td_matrix, k=70)
+
+
 # Return list of expanded query given input query
 def query_expander(query_in, data_list):
     original_query = query_in.lower()
     original_query = tokenize(query_in)
     for i in range(len(original_query)):
-        stemmed = stemming(original_query[i])
-        original_query[i] = stemmed
+        original_query[i] = stemming(original_query[i])
 
-    vectorizer = TfidfVectorizer(preprocessor=matrix_preprocessing)
-    td_matrix = vectorizer.fit_transform(
-        [x["review"] for x in data_list]
-    )  # 6 being review
     expanded_query = list()
 
-    d_compressed, s, words_compressed = svds(td_matrix, k=40)
     # words_compressed = v, d_compressed = d
-    words_compressed = words_compressed.transpose()
+    words_compressed_t = words_compressed.transpose()
     # setup for closest words helper
     # NB: a lot of these words end in "y" so maybe stemming
     word_to_index = vectorizer.vocabulary_
     index_to_word = {i: t for t, i in word_to_index.items()}
-    words_compressed_normed = normalize(words_compressed, axis=1)
+    words_compressed_normed = normalize(words_compressed_t, axis=1)
     word_list = tokenize(query_in)
 
-    for word in word_list:
+    # for word in word_list:
+    for word in original_query:
         closest_three_words = closest_words(
             word, word_to_index, index_to_word, words_compressed_normed
         )
@@ -463,4 +473,4 @@ def beans_search():
     return get_top_10_rec(expanded_query, roast_value)
 
 
-# app.run(debug=True)
+app.run(debug=True)
