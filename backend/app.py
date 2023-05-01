@@ -20,7 +20,7 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "Aa032819032819"
+MYSQL_USER_PASSWORD = "MayankRao16Cornell.edu"
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
 
@@ -402,43 +402,6 @@ def index_search(
     # print(final_results)
     return final_results[0:10]
 
-
-def jaccard_search(query, coffee_data, n_jacc, tokenizer=tokenize):
-    """Finds the Jaccard Similarity between bean's categories
-
-    Returns
-    =======
-
-    jacc_scores is a dictionary mapping each bean to the jaccard similarity score between
-    its flavor categories and the users query categories
-    """
-    query = query.lower()
-    query_tokens = tokenize(query)
-    results = list()
-    # getting the query categories
-    query_categories = []
-    for qt in query_tokens:
-        if rev_flavor_cat[qt] != None:
-            query_categories.append(rev_flavor_cat[qt])
-    # print(query_categories)
-
-    results = list()
-
-    for bean in coffee_data:
-        coffee_cat = bean["flavor"][1:-1].split(", ")
-        coffee_cat = [cat.replace("'", "") for cat in coffee_cat]
-        doc_id = bean["id"]
-        if query_categories != [] and coffee_cat != []:
-            jacc_score = len(np.intersect1d(query_categories, coffee_cat)) / len(
-                np.union1d(query_categories, coffee_cat)
-            )
-            results.append((jacc_score, doc_id))
-            # print(jacc_score)
-
-    results = sorted(results, key=lambda x: x[0], reverse=True)
-    return results[0:n_jacc]
-
-
 review_dict = tokenize_reviews(data_list)
 inv_idx = build_inverted_index(review_dict)
 idf = compute_idf(inv_idx, len(review_dict), min_df=10, max_df_ratio=0.2)
@@ -477,12 +440,6 @@ def get_top_10_rec(
         print("printing score")
         print(score)
 
-    if len(rec_beans) != 10:
-        print("entering jacc")
-        jacc_results = jaccard_search(query, data_list, 10 - len(rec_beans))
-        for jr in jacc_results:
-            bean_info = data_list[jr[1]]
-            rec_beans.append({"bean_info": bean_info, "score": jr[0]})
     return rec_beans
 
 
