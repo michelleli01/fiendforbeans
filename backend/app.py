@@ -4,6 +4,7 @@ import re
 import numpy as np
 import math
 from nltk.tokenize import TreebankWordTokenizer
+from nltk.stem import PorterStemmer
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
@@ -61,6 +62,26 @@ def load_data():
 data = load_data()  # string of dictionaries
 data_list = json.loads(data)  # convert to list of dicts
 # Cosine Sim Algorithm
+# preprocessing
+
+
+def matrix_preprocessing(text):
+    stemmer = PorterStemmer()
+    text = text.lower()
+    text = re.sub("\\W", " ", text)
+    text = re.sub("\\s+(in|the|all|for|and|on)\\s+", " _connector_ ", text)
+    # stem words
+    words = re.split("\\s+", text)
+    stemmed_words = [stemmer.stem(word=word) for word in words]
+    return " ".join(stemmed_words)
+
+
+def stemming(text):
+    stemmer = PorterStemmer()
+
+    stem = stemmer.stem(text)
+    #     print(review_tokens_distinct[i], stem)
+    return stem
 
 
 def tokenize(text):
@@ -78,7 +99,6 @@ def tokenize_reviews(coffee_data):
     tokens = set()
     review_dict = dict()
     for idx, bean in enumerate(coffee_data):
-        name = bean["name"]
         review = bean["review"]
         t_review = tokenize(review)
         if idx in review_dict:
@@ -105,8 +125,11 @@ def closest_words(word_in, word_to_index, index_to_word, words_representation_in
 def query_expander(query_in, data_list):
     original_query = query_in.lower()
     original_query = tokenize(query_in)
+    for i in range(len(original_query)):
+        stemmed = stemming(original_query[i])
+        original_query[i] = stemmed
 
-    vectorizer = TfidfVectorizer()
+    vectorizer = TfidfVectorizer(preprocessor=matrix_preprocessing)
     td_matrix = vectorizer.fit_transform(
         [x["review"] for x in data_list]
     )  # 6 being review
@@ -168,7 +191,7 @@ def compute_idf(inv_idx, n_docs, min_df=10, max_df_ratio=0.95):
     max_thresh = max_df_ratio * n_docs
     for term, docs in inv_idx.items():
         len_docs = len(docs)
-        if len_docs <= max_thresh and len_docs >= 10:
+        if len_docs <= max_thresh and len_docs >= min_df:
             pre_log_idf = n_docs / (1 + len_docs)
             idf = math.log2(pre_log_idf)
             idf_vals[term] = idf
@@ -380,7 +403,7 @@ def index_search(
 
 review_dict = tokenize_reviews(data_list)
 inv_idx = build_inverted_index(review_dict)
-idf = compute_idf(inv_idx, len(review_dict), min_df=10, max_df_ratio=0.2)
+idf = compute_idf(inv_idx, len(review_dict), min_df=3, max_df_ratio=0.2)
 
 inv_idx = {
     key: val for key, val in inv_idx.items() if key in idf
@@ -440,4 +463,4 @@ def beans_search():
     return get_top_10_rec(expanded_query, roast_value)
 
 
-app.run(debug=True)
+# app.run(debug=True)
