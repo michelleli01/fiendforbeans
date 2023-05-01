@@ -352,12 +352,9 @@ def index_search(
         the highest score, and `doc_id` points to the document
         with the highest score.
     """
-    query = query.lower()
-    # query_tokens = tokenize(query)
-    query_tokens = query_expander(query, coffee_data)
     query_word_counts = dict()
 
-    for word in query_tokens:
+    for word in query:
         query_word_counts[word] = query_word_counts.get(word, 0) + 1
     results = list()
     doc_scores = score_func(query_word_counts, index, idf)
@@ -420,7 +417,7 @@ def get_top_10_rec(
         bean_info = data_list[bean_id]
         rec_beans.append({"bean_info": bean_info, "score": score})
 
-    return rec_beans
+    return {"beans": rec_beans, "expandedQuery": query}
 
 
 # rel_beans should be top 10 most similar cbeans & reviews & what frontend displays
@@ -443,7 +440,8 @@ def search():
 def beans_search():
     flavor_prof = request.args.get("flavor_prof")
     roast_value = request.args.get("roast_value")
-    return get_top_10_rec(flavor_prof, roast_value)
+    expanded_query = query_expander(flavor_prof, data_list)
+    return get_top_10_rec(expanded_query, roast_value)
 
 
 app.run(debug=True)
