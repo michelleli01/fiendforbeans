@@ -32,7 +32,7 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = ""
+MYSQL_USER_PASSWORD = "MayankRao16Cornell.edu"
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
 
@@ -201,7 +201,7 @@ def compute_idf(inv_idx, n_docs, min_df=10, max_df_ratio=0.95):
     max_thresh = max_df_ratio * n_docs
     for term, docs in inv_idx.items():
         len_docs = len(docs)
-        if len_docs <= max_thresh and len_docs >= min_df:
+        if (len_docs <= max_thresh and len_docs >= min_df) or (term=='sweet'):
             pre_log_idf = n_docs / (1 + len_docs)
             idf = math.log2(pre_log_idf)
             idf_vals[term] = idf
@@ -427,7 +427,6 @@ def filter_search(roast):
     data = mysql_engine.query_selector(query_sql)
     return list(data)
 
-
 def get_top_10_rec(
     query,
     roast_value,
@@ -473,4 +472,4 @@ def beans_search():
     return get_top_10_rec(expanded_query, roast_value)
 
 
-# app.run(debug=True)
+app.run(debug=True)
