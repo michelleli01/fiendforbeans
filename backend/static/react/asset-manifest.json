@@ -1,9 +1,10 @@
 {
   "files": {
     "main.css": "/static/css/main.90eb7771.css",
-    "main.js": "/static/js/main.f06e2b91.js",
+    "main.js": "/static/js/main.141cc05d.js",
     "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
     "static/media/logo.png": "/static/media/logo.051e96e13f4067d13f2e.png",
+    "static/media/coffee_cup.jpeg": "/static/media/coffee_cup.e9437cbb93a943640c18.jpeg",
     "static/media/Barrington Coffee Roasting Co..webp": "/static/media/Barrington Coffee Roasting Co..61296d6c015fc520b420.webp",
     "static/media/Barrington Coffee Roasting.webp": "/static/media/Barrington Coffee Roasting.61296d6c015fc520b420.webp",
     "static/media/Dragonfly Coffee Roasters.webp": "/static/media/Dragonfly Coffee Roasters.4cd7a0e7171c5c252800.webp",
@@ -59,11 +60,11 @@
     "index.html": "/index.html",
     "static/media/Revel Coffee.webp": "/static/media/Revel Coffee.92f3164d8e1f5e2121cf.webp",
     "main.90eb7771.css.map": "/static/css/main.90eb7771.css.map",
-    "main.f06e2b91.js.map": "/static/js/main.f06e2b91.js.map",
+    "main.141cc05d.js.map": "/static/js/main.141cc05d.js.map",
     "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.90eb7771.css",
-    "static/js/main.f06e2b91.js"
+    "static/js/main.141cc05d.js"
   ]
 }

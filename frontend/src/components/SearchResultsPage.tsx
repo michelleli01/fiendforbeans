@@ -12,6 +12,7 @@ import LinearProgress, {
 } from '@mui/material/LinearProgress';
 import { Bean } from '../types';
 import logo from '../static/images/logo.png';
+import coffee_cup from '../static/images/coffee_cup.jpeg';
 
 function importAll(r: __WebpackModuleApi.RequireContext) {
   let images: { [key: string]: any } = {};
@@ -140,26 +141,22 @@ const SearchResultsPage = () => {
                 style={{ display: 'flex', alignItems: 'center', margin: '1%' }}
               >
                 <Box>
-                  {images[`${coffee.bean_info.roaster}.webp`] ? (
+                  {
                     <a href={coffee.bean_info.roaster_link}>
                       <CardMedia
                         component='img'
-                        sx={{ width: 150 }}
+                        sx={{
+                          width: 150,
+                        }}
                         image={
                           images[`${coffee.bean_info.roaster}.webp`]
                             ? images[`${coffee.bean_info.roaster}.webp`]
-                            : undefined
+                            : coffee_cup
                         }
                         alt='roaster logo'
                       />
                     </a>
-                  ) : (
-                    <Box
-                      sx={{ fontFamily: 'Comic Sans MS', textAlign: 'center' }}
-                    >
-                      Roaster logo not available :(
-                    </Box>
-                  )}
+                  }
                 </Box>
 
                 <CardContent sx={{ width: '100%' }}>
