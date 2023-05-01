@@ -90,23 +90,17 @@ def tokenize_reviews(coffee_data):
 
 
 # SVD Code Referenced from Code Demo Lecture 4/13
-# print(data_list)
 # Find 3 closest words to a given word in a vocab dict of all the words in svd rep
 def closest_words(word_in, word_to_index, index_to_word, words_representation_in, k=3):
-    # print(word_in)
     if word_in in word_to_index:
-        # print('yes')
         sims = words_representation_in.dot(
             words_representation_in[word_to_index[word_in], :])
         asort = np.argsort(-sims)[:k+1]
     else:
-        # print('no')
         asort = list()  # empty list
-    # print(asort)
     return [index_to_word[i] for i in asort[1:]]
+
 # Return list of expanded query given input query
-
-
 def query_expander(query_in, data_list):
     original_query = query_in.lower()
     original_query = tokenize(query_in)
@@ -122,7 +116,6 @@ def query_expander(query_in, data_list):
     # setup for closest words helper
     # NB: a lot of these words end in "y" so maybe stemming
     word_to_index = vectorizer.vocabulary_
-    # print(word_to_index)
     index_to_word = {i: t for t, i in word_to_index.items()}
     words_compressed_normed = normalize(words_compressed, axis=1)
     word_list = tokenize(query_in)
@@ -138,12 +131,6 @@ def query_expander(query_in, data_list):
     # td_matrix_np = normalize(td_matrix_np)
 
     return (expanded_query + original_query)
-
-
-# testing code
-expanded_query = query_expander("floral", data_list)
-print("this is expanded query")
-print(expanded_query)
 
 
 def build_inverted_index(review_dict):
@@ -179,7 +166,6 @@ def compute_idf(inv_idx, n_docs, min_df=10, max_df_ratio=0.95):
     idf_vals = dict()
     max_thresh = max_df_ratio * n_docs
     for term, docs in inv_idx.items():
-        # print(type(docs))
         len_docs = len(docs)
         if len_docs <= max_thresh and len_docs >= 10:
             pre_log_idf = n_docs / (1 + len_docs)
@@ -376,7 +362,6 @@ def index_search(
     results = list()
     doc_scores = score_func(query_word_counts, index, idf)
 
-    # print(doc_scores)
     # q_norms
     q_norm = 0
     for term, freq in query_word_counts.items():
@@ -396,10 +381,8 @@ def index_search(
         results, data_list, roast_value
     )  # top roast results (may not be anything)
 
-    # print(roast_results)
     difference = set(results) - set(roast_results)
     final_results = roast_results + list(difference)
-    # print(final_results)
     return final_results[0:10]
 
 review_dict = tokenize_reviews(data_list)
@@ -416,7 +399,6 @@ bean_doc_norms = compute_doc_norms(inv_idx, idf, len(review_dict))
 def filter_search(roast):
     query_sql = f"""SELECT * from reviews WHERE roast =={roast}"""
     data = mysql_engine.query_selector(query_sql)
-    # print(data)
     return list(data)
 
 
@@ -437,8 +419,6 @@ def get_top_10_rec(
     for score, bean_id in output:
         bean_info = data_list[bean_id]
         rec_beans.append({"bean_info": bean_info, "score": score})
-        print("printing score")
-        print(score)
 
     return rec_beans
 
