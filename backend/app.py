@@ -411,7 +411,8 @@ def index_search(
     # difference = set(results) - set(roast_results)
     # final_results = roast_results + list(difference)
     # return final_results[0:10]
-    return results[0:10]
+    final_results = roast_search(results, data_list, roast_value)
+    return final_results[:10] if len(final_results) >= 10 else final_results
 
 
 review_dict = tokenize_reviews(data_list)
