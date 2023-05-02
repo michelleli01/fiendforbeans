@@ -32,7 +32,7 @@ os.environ["ROOT_PATH"] = os.path.abspath(os.path.join("..", os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "MayankRao16Cornell.edu"
+MYSQL_USER_PASSWORD = ""
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "coffeedb"
 
@@ -194,6 +194,9 @@ def build_inverted_index(review_dict):
     return inverted_index  # index w doc_id, count
 
 
+exception_terms = ["sweet", "chocolate", "cocoa"]
+
+
 def compute_idf(inv_idx, n_docs, min_df=10, max_df_ratio=0.95):
     """Compute term IDF values from the inverted index."""
 
@@ -201,7 +204,7 @@ def compute_idf(inv_idx, n_docs, min_df=10, max_df_ratio=0.95):
     max_thresh = max_df_ratio * n_docs
     for term, docs in inv_idx.items():
         len_docs = len(docs)
-        if (len_docs <= max_thresh and len_docs >= min_df) or (term=='sweet'):
+        if (len_docs <= max_thresh and len_docs >= min_df) or (term in exception_terms):
             pre_log_idf = n_docs / (1 + len_docs)
             idf = math.log2(pre_log_idf)
             idf_vals[term] = idf
@@ -426,6 +429,7 @@ def filter_search(roast):
     query_sql = f"""SELECT * from reviews WHERE roast =={roast}"""
     data = mysql_engine.query_selector(query_sql)
     return list(data)
+
 
 def get_top_10_rec(
     query,
